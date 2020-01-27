@@ -1,0 +1,7 @@
+- 36.75 mm wide base
+- 46.63 mm wide with heatsink
+- 65.03 mm long base
+- 4.18 mm edhe hole to center screw terminal pin
+- 3.33 mm wide edge hole
+- 23.69 mm edge to edge wide holes
+- 55.15 mm edge to edge long holes
