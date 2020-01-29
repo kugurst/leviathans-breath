@@ -36,6 +36,7 @@ public:
   const inline float get_voltage() { return voltage_; };
   void set_pwm(float pwm);
   const inline float get_pwm() { return pwm_; };
+  void set_pwm_controlled(bool pwm_controlled);
   const inline bool is_pwm_controlled() { return pwm_controlled_; };
   void loop();
   const float read_rpm();

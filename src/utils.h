@@ -3,7 +3,7 @@
 
 #define CUSTOM_TACH
 #define FIXED_POINTS_USE_NAMESPACE
-#define DISABLE_SERIAL
+// #define DISABLE_SERIAL
 
 #include <functional>
 

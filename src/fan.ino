@@ -63,6 +63,13 @@ void Fan::set_pwm(float pwm) {
   }
 }
 
+void Fan::set_pwm_controlled(bool pwm_controlled) {
+  pwm_controlled_ = pwm_controlled;
+  if (pwm_controlled_) {
+    set_dac_(MAX_DAC_VALUE);
+  }
+}
+
 void Fan::loop() {
 #ifndef CUSTOM_TACH
   if (rpm_reader_.available()) {

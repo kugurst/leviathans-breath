@@ -17,6 +17,7 @@
 
 #include "constants.h"
 #include "curve.h"
+#include "file_manager.h"
 
 namespace LB {
 const uint8_t HID_BUF_SIZE = 64;
@@ -25,14 +26,14 @@ const uint16_t CHECK_DELAY_US = 2000;
 
 // All commands are issued by the master
 enum Command : uint8_t {
-  SEND_CURVE,
-  RECEIVE_CURVE,
-  SEND_ALL_RPM,
-  SEND_ALL_TEMPERATURE,
+  GET_CURVE,
+  SET_CURVE,
+  GET_ALL_RPM,
+  GET_ALL_TEMPERATURE,
   GET_ALL_FAN_PARAMETERS,
-  SET_ALL_FAN_PARAMETERS,
+  SET_FAN_PARAMETERS,
   GET_ALL_LED_PARAMETERS,
-  SET_ALL_LED_PARAMETERS,
+  SET_LED_PARAMETERS,
 };
 
 enum CurveType : uint8_t {
@@ -44,20 +45,26 @@ enum CurveChannel : uint8_t {
 };
 
 struct CurveCommandParameters {
+  uint8_t channel;
   CurveType curve_type;
-  CurveChannel curve_channel;
-  uint8_t curve_idx;
+  CurveChannel rgb_channel;
+  uint16_t curve_length;
 };
 
 struct FanParameters {
+  uint8_t channel;
   bool pwm_controlled;
   float pwm;
   float voltage;
 };
 
 struct LEDParameters {
+  uint8_t channel;
   bool time_controlled;
   float speed_multiplier;
+  float r_brightness;
+  float g_brightness;
+  float b_brightness;
 };
 
 class Protocol {
@@ -67,11 +74,15 @@ public:
 
 private:
   static void print_command_(Command command);
-  static void process_command_(Command command);
-  static void send_curve_(Curve& curve);
+  static void process_command_(Command command, std::array<uint8_t, HID_BUF_SIZE>& extra_data, uint8_t extra_data_offset);
+  static bool set_curve_(CurveCommandParameters curve_command);
+  static bool get_curve_(CurveCommandParameters curve_command);
   static bool send_all_rpm_();
   static bool send_all_temperatures_();
   static bool get_all_fan_parameters_();
+  static bool set_fan_parameters_(FanParameters fan_command);
+  static bool get_all_led_parameters_();
+  static bool set_led_parameters_(LEDParameters led_command);
   static bool send_start_packet_(Command command, uint32_t num_packets);
   static microsDelay check_delay_;
   static std::array<uint8_t, HID_BUF_SIZE> rx_hid_buf_;

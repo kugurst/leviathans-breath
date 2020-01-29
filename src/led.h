@@ -22,9 +22,9 @@ public:
   void set_r_brightness(float brightness);
   void set_g_brightness(float brightness);
   void set_b_brightness(float brightness);
-  float get_r_brightness();
-  float get_g_brightness();
-  float get_b_brightness();
+  const inline float get_r_brightness() const { return r_brightness_; };
+  const inline float get_g_brightness() const { return g_brightness_; };
+  const inline float get_b_brightness() const { return b_brightness_; };
 
 private:
   SetDacFunc set_r_dac_ = nullptr;
