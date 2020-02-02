@@ -32,7 +32,7 @@ void loop() {
 #ifndef DISABLE_SERIAL
     // Serial.println(LB::Config::get_fan(0).read_rpm());
     // Serial.println(LB::Config::get_fan(0).is_pwm_controlled());
-    // Serial.println(LB::Config::get_temperature_sensor(0).read_temperature());
+    Serial.println(LB::Config::get_temperature_sensor(0).read_temperature());
     // Serial.println(sizeof(LB::LEDControl) * LB::Constants::NUM_LEDS +
     // sizeof(LB::FanControl) * LB::Constants::NUM_FANS);
     // Serial.println(LB::Constants::POINTS_PER_CURVE);

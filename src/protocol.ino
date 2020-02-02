@@ -18,6 +18,7 @@ void Protocol::print_command_(Command command) {
   case Command::SET_CURVE:
     break;
   case Command::GET_CURVE:
+    Serial.println(F("GET CURVE Received"));
     break;
   case Command::GET_ALL_RPM:
     Serial.println(F("SEND ALL RPM Received"));
