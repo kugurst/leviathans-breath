@@ -352,14 +352,7 @@ bool Protocol::set_fan_parameters_(FanParameters fan_command) {
     return false;
   }
 
-  auto &fan_control = Config::get_fan_control(fan_command.channel);
   auto &fan = Config::get_fan(fan_command.channel);
-
-  // if (fan_command.pwm_controlled) {
-  //   fan.set_pwm(fan_command.pwm);
-  // } else {
-  //   fan.set_voltage(fan_command.voltage);
-  // }
 
   fan.set_pwm_controlled(fan_command.pwm_controlled);
 

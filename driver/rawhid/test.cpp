@@ -1,3 +1,5 @@
+#include <cstdlib>
+
 #include <iostream>
 #include <limits>
 
@@ -36,7 +38,8 @@ TEST_F(DriverTest, GetFanCurve) {
 
 TEST_F(DriverTest, SendFanCurve) {
   std::vector<std::tuple<float, float>> points;
-  points.reserve(Constants::POINTS_PER_CURVE);
+  // points.reserve(Constants::POINTS_PER_CURVE);
+  points.reserve(50);
   for (auto i = 0; i < points.capacity(); i++) {
     points.push_back({i % std::numeric_limits<uint8_t>::max(),
                       i % std::numeric_limits<uint8_t>::max()});
@@ -85,7 +88,8 @@ TEST_F(DriverTest, GetLedCurve) {
 
 TEST_F(DriverTest, SendLedCurve) {
   std::vector<std::tuple<float, float>> points;
-  points.reserve(Constants::POINTS_PER_CURVE);
+  // points.reserve(Constants::POINTS_PER_CURVE);
+  points.reserve(50);
   for (auto i = 0; i < points.capacity(); i++) {
     points.push_back({i % std::numeric_limits<uint8_t>::max(),
                       i % std::numeric_limits<uint8_t>::max()});
@@ -164,6 +168,27 @@ TEST_F(DriverTest, GetFanParameters) {
   }
 }
 
+TEST_F(DriverTest, SetFanParameters) {
+  std::array<bool, Constants::NUM_FANS> pwm_controlled_set;
+
+  for (auto i = 0; i < Constants::NUM_FANS; i++) {
+    auto pwm_controlled = (float)rand() / (float)RAND_MAX > 0.5f;
+    ASSERT_TRUE(driver.set_fan_parameters(i, pwm_controlled));
+
+    pwm_controlled_set[i] = pwm_controlled;
+  }
+
+  auto all_fans = driver.get_all_fan_parameters();
+  ASSERT_TRUE(all_fans.length() > 0);
+  nlohmann::json j = nlohmann::json::parse(all_fans);
+  ASSERT_TRUE(j["fans"].size() > 0);
+
+  for (auto &fan_params : j["fans"]) {
+    ASSERT_EQ(pwm_controlled_set[fan_params["channel"].get<int>()],
+              fan_params["pwm_controlled"].get<bool>());
+  }
+}
+
 TEST_F(DriverTest, GetLedParameters) {
   auto all_leds = driver.get_all_led_parameters();
   ASSERT_TRUE(all_leds.length() > 0);
@@ -177,6 +202,36 @@ TEST_F(DriverTest, GetLedParameters) {
     ASSERT_NO_THROW(led_params["r_brightness"].get<float>());
     ASSERT_NO_THROW(led_params["g_brightness"].get<float>());
     ASSERT_NO_THROW(led_params["b_brightness"].get<float>());
+  }
+}
+
+TEST_F(DriverTest, SetLedParameters) {
+  std::array<float, Constants::NUM_LEDS> speeds;
+  std::array<bool, Constants::NUM_LEDS> time_controlled_set;
+
+  for (auto i = 0; i < Constants::NUM_LEDS; i++) {
+    auto speed_multiplier = (float)rand() / (float)RAND_MAX;
+    auto time_controlled = (float)rand() / (float)RAND_MAX > 0.5f;
+    ASSERT_TRUE(
+        driver.set_led_parameters(i, time_controlled, speed_multiplier));
+
+    speeds[i] = speed_multiplier;
+    time_controlled_set[i] = time_controlled;
+  }
+
+  auto all_leds = driver.get_all_led_parameters();
+  ASSERT_TRUE(all_leds.length() > 0);
+  nlohmann::json j = nlohmann::json::parse(all_leds);
+  ASSERT_TRUE(j["leds"].size() > 0);
+
+  auto fuzz = 0.0001f;
+  for (auto &led_params : j["leds"]) {
+    ASSERT_EQ(time_controlled_set[led_params["channel"].get<int>()],
+              led_params["time_controlled"].get<bool>());
+    ASSERT_TRUE(speeds[led_params["channel"].get<int>()] - fuzz <
+                    led_params["speed_multiplier"].get<float>() &&
+                led_params["speed_multiplier"].get<float>() <
+                    speeds[led_params["channel"].get<int>()] + fuzz);
   }
 }
 } // namespace LB

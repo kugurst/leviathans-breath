@@ -397,6 +397,28 @@ std::string Driver::get_all_fan_parameters() {
   return j.dump();
 }
 
+bool Driver::set_fan_parameters(int channel, bool pwm_controlled) {
+  if (channel > Constants::NUM_FANS) {
+    return false;
+  }
+
+  FanParameters fan_params = {.channel = static_cast<uint8_t>(channel),
+                              .pwm_controlled = pwm_controlled};
+
+  memset(trx_buf_.data(), 0, sizeof(uint8_t) * trx_buf_.size());
+  trx_buf_[0] = (uint8_t)Command::SET_FAN_PARAMETERS;
+  memcpy(trx_buf_.data() + 1, &fan_params, sizeof(FanParameters));
+
+  SEND_BUF(trx_buf_, false);
+
+  FanParameters ack;
+  RECEIVE_BUF(trx_buf_, false);
+  memcpy(&ack, trx_buf_.data(), sizeof(FanParameters));
+
+  return ack.channel == fan_params.channel &&
+         ack.pwm_controlled == fan_params.pwm_controlled;
+}
+
 std::string Driver::get_all_led_parameters() {
   memset(trx_buf_.data(), 0, sizeof(uint8_t) * trx_buf_.size());
   trx_buf_[0] = (uint8_t)Command::GET_ALL_LED_PARAMETERS;
@@ -436,5 +458,29 @@ std::string Driver::get_all_led_parameters() {
          {"b_brightness", led_params.b_brightness}}));
   }
   return j.dump();
+}
+
+bool Driver::set_led_parameters(int channel, bool time_controlled,
+                                float speed_multiplier) {
+  if (channel > Constants::NUM_FANS) {
+    return false;
+  }
+
+  LEDParameters led_params = {.channel = static_cast<uint8_t>(channel),
+                              .time_controlled = time_controlled,
+                              .speed_multiplier = speed_multiplier};
+
+  memset(trx_buf_.data(), 0, sizeof(uint8_t) * trx_buf_.size());
+  trx_buf_[0] = (uint8_t)Command::SET_LED_PARAMETERS;
+  memcpy(trx_buf_.data() + 1, &led_params, sizeof(LEDParameters));
+
+  SEND_BUF(trx_buf_, false);
+
+  LEDParameters ack;
+  RECEIVE_BUF(trx_buf_, false);
+  memcpy(&ack, trx_buf_.data(), sizeof(LEDParameters));
+
+  return ack.channel == led_params.channel &&
+         ack.time_controlled == led_params.time_controlled;
 }
 } // namespace LB
