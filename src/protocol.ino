@@ -97,6 +97,18 @@ void Protocol::process_command_(Command command,
   }
 }
 
+bool Protocol::echo_(std::array<uint8_t, HID_BUF_SIZE>& extra_data, uint8_t extra_data_offset) {
+  clear_buffer(tx_hid_buf_);
+
+  tx_hid_buf_[0] = (uint8_t)Command::ECHO;
+  memcpy(tx_hid_buf_.data() + 1, extra_data.data() + extra_data_offset, HID_BUF_SIZE - extra_data_offset);
+  if (!send_buffer(tx_hid_buf_)) {
+    return false;
+  }
+
+  return true;
+}
+
 bool Protocol::get_curve_(CurveCommandParameters curve_command) {
   Curve *curve = nullptr;
   if (curve_command.curve_type == CurveType::FAN_CURVE) {
@@ -246,7 +258,7 @@ bool Protocol::send_all_rpm_() {
     auto rpm = LB::Config::get_fan(i).read_rpm();
     memcpy(tx_hid_buf_.data() + packet_offset, &rpm, sizeof(float));
     packet_offset += sizeof(float);
-    if (packet_offset >= RAWHID_TX_SIZE) {
+    if (packet_offset + sizeof(float) >= RAWHID_TX_SIZE) {
       if (!send_buffer(tx_hid_buf_)) {
         return false;
       }
@@ -277,7 +289,7 @@ bool Protocol::send_all_temperatures_() {
     auto temp = LB::Config::get_temperature_sensor(i).read_temperature();
     memcpy(tx_hid_buf_.data() + packet_offset, &temp, sizeof(float));
     packet_offset += sizeof(float);
-    if (packet_offset >= RAWHID_TX_SIZE) {
+    if (packet_offset + sizeof(float) >= RAWHID_TX_SIZE) {
       if (!send_buffer(tx_hid_buf_)) {
         return false;
       }

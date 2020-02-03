@@ -2,6 +2,8 @@
 
 #include <array>
 #include <string>
+#include <tuple>
+#include <vector>
 
 #include "constants.h"
 
@@ -12,6 +14,7 @@ const uint8_t HID_TIMEOUT = 100;
 
 // All commands are issued by the master
 enum Command : uint8_t {
+  ECHO,
   GET_CURVE,
   SET_CURVE,
   GET_ALL_RPM,
@@ -59,9 +62,11 @@ public:
   bool is_connected();
   bool disconnect();
 
+  bool sync();
+
   std::string get_fan_curve(int channel);
   bool send_fan_curve(int channel, std::string curve);
-  std::string get_led_curve(int channel, int rgb_channel);
+  std::string get_led_curve(int channel);
   bool send_led_curve(int channel, int rgb_channel, std::string curve);
 
   std::string get_all_fan_rpms();
@@ -73,6 +78,8 @@ public:
   std::string get_all_led_parameters();
   bool set_led_parameters(int channel, bool time_controlled, float speed_multiplier);
 private:
+  std::vector<std::tuple<float, float>> get_curve_(CurveCommandParameters curve_command);
+
   std::array<uint8_t, HID_BUF_SIZE> trx_buf_;
   int driver_handle_ = DEFAULT_DRIVER_HANDLE;
 };

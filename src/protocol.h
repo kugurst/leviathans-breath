@@ -26,6 +26,7 @@ const uint16_t CHECK_DELAY_US = 2000;
 
 // All commands are issued by the master
 enum Command : uint8_t {
+  ECHO,
   GET_CURVE,
   SET_CURVE,
   GET_ALL_RPM,
@@ -75,6 +76,7 @@ public:
 private:
   static void print_command_(Command command);
   static void process_command_(Command command, std::array<uint8_t, HID_BUF_SIZE>& extra_data, uint8_t extra_data_offset);
+  static bool echo_(std::array<uint8_t, HID_BUF_SIZE>& extra_data, uint8_t extra_data_offset);
   static bool set_curve_(CurveCommandParameters curve_command);
   static bool get_curve_(CurveCommandParameters curve_command);
   static bool send_all_rpm_();
