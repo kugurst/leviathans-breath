@@ -8,6 +8,7 @@
 #include "constants.h"
 
 namespace LB {
+const uint8_t SYNC_RETRY_COUNT = 10;
 const int DEFAULT_DRIVER_HANDLE = -111;
 const uint8_t HID_BUF_SIZE = 64;
 const uint8_t HID_TIMEOUT = 100;

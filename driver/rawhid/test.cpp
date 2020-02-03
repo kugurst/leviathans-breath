@@ -17,6 +17,10 @@ public:
 
 class DriverTest : public ::testing::Test {};
 
+TEST_F(DriverTest, Sync) {
+  ASSERT_TRUE(driver.sync());
+}
+
 TEST_F(DriverTest, GetFanCurve) {
   for (int i = 0; i < Constants::NUM_FANS; i++) {
     auto points = driver.get_fan_curve(i);

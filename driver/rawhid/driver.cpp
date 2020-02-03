@@ -3,7 +3,9 @@
 #include <cstdbool>
 #include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
+#include <ctime>
 #include <iostream>
 #include <tuple>
 #include <vector>
@@ -57,6 +59,8 @@ bool Driver::connect() {
   }
 
   driver_handle_ = 0;
+
+  srand((unsigned int)time(NULL));
 
 #ifdef DEBUG
   std::cout << "found rawhid device" << std::endl;
@@ -193,6 +197,37 @@ std::string Driver::get_all_fan_rpms() {
   return j.dump();
 }
 
+bool Driver::sync() {
+  std::array<uint8_t, HID_BUF_SIZE - 1> rand_dat;
+  for (auto i = 0; i < rand_dat.size(); i++) {
+    rand_dat[i] = rand();
+  }
+
+  memset(trx_buf_.data(), 0, sizeof(uint8_t) * trx_buf_.size());
+  trx_buf_[0] = (uint8_t)Command::ECHO;
+  memcpy(trx_buf_.data() + 1, rand_dat.data(), rand_dat.size());
+
+  // print_bytes_received(trx_buf_.size(), trx_buf_);
+
+  rawhid_send(driver_handle_, trx_buf_.data(), trx_buf_.size(), HID_TIMEOUT);
+
+  auto retry_count = 0;
+  while (true) {
+    RECEIVE_BUF(trx_buf_, false);
+
+    if (memcmp(trx_buf_.data() + 1, rand_dat.data(), rand_dat.size()) == 0) {
+      break;
+    }
+
+    retry_count++;
+    if (retry_count >= SYNC_RETRY_COUNT) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 std::string Driver::get_all_temperatures() {
   memset(trx_buf_.data(), 0, sizeof(uint8_t) * trx_buf_.size());
   trx_buf_[0] = (uint8_t)Command::GET_ALL_TEMPERATURE;
@@ -295,13 +330,13 @@ std::string Driver::get_all_led_parameters() {
 
   nlohmann::json j;
   for (auto &led_params : all_leds) {
-    j["leds"].push_back(
-        nlohmann::json::object({{"channel", led_params.channel},
-                                {"time_controlled", led_params.time_controlled},
-                                {"speed_multiplier", led_params.speed_multiplier},
-                                {"r_brightness", led_params.r_brightness},
-                                {"g_brightness", led_params.g_brightness},
-                                {"b_brightness", led_params.b_brightness}}));
+    j["leds"].push_back(nlohmann::json::object(
+        {{"channel", led_params.channel},
+         {"time_controlled", led_params.time_controlled},
+         {"speed_multiplier", led_params.speed_multiplier},
+         {"r_brightness", led_params.r_brightness},
+         {"g_brightness", led_params.g_brightness},
+         {"b_brightness", led_params.b_brightness}}));
   }
   return j.dump();
 }

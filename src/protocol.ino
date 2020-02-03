@@ -55,6 +55,9 @@ void Protocol::process_command_(Command command,
   LEDParameters led_command;
 
   switch (command) {
+  case Command::ECHO:
+    echo_(extra_data, extra_data_offset);
+    break;
   case Command::GET_CURVE:
     memcpy(&curve_command, extra_data.data() + 1,
            sizeof(CurveCommandParameters));
