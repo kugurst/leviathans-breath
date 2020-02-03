@@ -78,6 +78,37 @@ bool Driver::disconnect() {
   return true;
 }
 
+bool Driver::sync() {
+  std::array<uint8_t, HID_BUF_SIZE - 1> rand_dat;
+  for (auto i = 0; i < rand_dat.size(); i++) {
+    rand_dat[i] = rand();
+  }
+
+  memset(trx_buf_.data(), 0, sizeof(uint8_t) * trx_buf_.size());
+  trx_buf_[0] = (uint8_t)Command::ECHO;
+  memcpy(trx_buf_.data() + 1, rand_dat.data(), rand_dat.size());
+
+  // print_bytes_received(trx_buf_.size(), trx_buf_);
+
+  rawhid_send(driver_handle_, trx_buf_.data(), trx_buf_.size(), HID_TIMEOUT);
+
+  auto retry_count = 0;
+  while (true) {
+    RECEIVE_BUF(trx_buf_, false);
+
+    if (memcmp(trx_buf_.data() + 1, rand_dat.data(), rand_dat.size()) == 0) {
+      break;
+    }
+
+    retry_count++;
+    if (retry_count >= SYNC_RETRY_COUNT) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 std::vector<std::tuple<float, float>>
 Driver::get_curve_(CurveCommandParameters curve_command) {
   memset(trx_buf_.data(), 0, sizeof(uint8_t) * trx_buf_.size());
@@ -195,37 +226,6 @@ std::string Driver::get_all_fan_rpms() {
   nlohmann::json j;
   j["rpms"] = fan_rpms;
   return j.dump();
-}
-
-bool Driver::sync() {
-  std::array<uint8_t, HID_BUF_SIZE - 1> rand_dat;
-  for (auto i = 0; i < rand_dat.size(); i++) {
-    rand_dat[i] = rand();
-  }
-
-  memset(trx_buf_.data(), 0, sizeof(uint8_t) * trx_buf_.size());
-  trx_buf_[0] = (uint8_t)Command::ECHO;
-  memcpy(trx_buf_.data() + 1, rand_dat.data(), rand_dat.size());
-
-  // print_bytes_received(trx_buf_.size(), trx_buf_);
-
-  rawhid_send(driver_handle_, trx_buf_.data(), trx_buf_.size(), HID_TIMEOUT);
-
-  auto retry_count = 0;
-  while (true) {
-    RECEIVE_BUF(trx_buf_, false);
-
-    if (memcmp(trx_buf_.data() + 1, rand_dat.data(), rand_dat.size()) == 0) {
-      break;
-    }
-
-    retry_count++;
-    if (retry_count >= SYNC_RETRY_COUNT) {
-      return false;
-    }
-  }
-
-  return true;
 }
 
 std::string Driver::get_all_temperatures() {

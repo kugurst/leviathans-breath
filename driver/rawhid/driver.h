@@ -60,7 +60,7 @@ struct LEDParameters {
 class Driver {
 public:
   bool connect();
-  bool is_connected();
+  inline bool is_connected() { return sync(); };
   bool disconnect();
 
   bool sync();
