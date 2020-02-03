@@ -26,6 +26,15 @@
     }                                                                          \
   }
 
+#define SEND_BUF(buf, ret)                                                     \
+  {                                                                            \
+    if (rawhid_send(driver_handle_, buf.data(), buf.size(), HID_TIMEOUT) <=    \
+        0) {                                                                   \
+      return ret;                                                              \
+    }                                                                          \
+    memset(buf.data(), 0, sizeof(uint8_t) * buf.size());                       \
+  }
+
 namespace LB {
 static void print_bytes_received(int bytes_received,
                                  std::array<uint8_t, HID_BUF_SIZE> &buf) {
@@ -152,6 +161,39 @@ Driver::get_curve_(CurveCommandParameters curve_command) {
   return points;
 }
 
+bool Driver::send_curve_(CurveCommandParameters curve_command,
+                         const std::vector<std::tuple<float, float>> &curve) {
+  memset(trx_buf_.data(), 0, sizeof(uint8_t) * trx_buf_.size());
+  trx_buf_[0] = (uint8_t)Command::SET_CURVE;
+  memcpy(trx_buf_.data() + 1, &curve_command, sizeof(CurveCommandParameters));
+  SEND_BUF(trx_buf_, false);
+
+  uint16_t packet_offset = 0;
+  for (uint i = 0; i < curve_command.curve_length; i++) {
+    const auto &point = curve[i];
+    const auto x = std::get<0>(point);
+    const auto y = std::get<1>(point);
+    memcpy(trx_buf_.data() + packet_offset, &x, sizeof(float));
+    memcpy(trx_buf_.data() + packet_offset + sizeof(float), &y, sizeof(float));
+
+    packet_offset += sizeof(float) * 2;
+    if (packet_offset + sizeof(float) * 2 >= HID_BUF_SIZE) {
+      SEND_BUF(trx_buf_, false);
+
+      packet_offset = 0;
+    }
+  }
+  if (packet_offset > 0) {
+    SEND_BUF(trx_buf_, false);
+  }
+
+  CurveCommandParameters ack;
+  RECEIVE_BUF(trx_buf_, false);
+  memcpy(&ack, trx_buf_.data(), sizeof(CurveCommandParameters));
+
+  return ack.curve_length == curve_command.curve_length;
+}
+
 std::string Driver::get_fan_curve(int channel) {
   if (channel >= Constants::NUM_FANS) {
     return {};
@@ -169,6 +211,26 @@ std::string Driver::get_fan_curve(int channel) {
   nlohmann::json j;
   j["points"] = points;
   return j.dump();
+}
+
+bool Driver::send_fan_curve(int channel, const std::string &curve) {
+  if (channel >= Constants::NUM_FANS) {
+    return false;
+  }
+
+  nlohmann::json j = nlohmann::json::parse(curve);
+  auto points = j["points"].get<std::vector<std::tuple<float, float>>>();
+
+  if (points.size() > Constants::POINTS_PER_CURVE) {
+    return false;
+  }
+
+  CurveCommandParameters curve_command = {
+      .channel = static_cast<uint8_t>(channel),
+      .curve_type = CurveType::FAN_CURVE,
+      .curve_length = static_cast<uint16_t>(points.size())};
+
+  return send_curve_(curve_command, points);
 }
 
 std::string Driver::get_led_curve(int channel) {
@@ -193,6 +255,41 @@ std::string Driver::get_led_curve(int channel) {
   j["points"]["g"] = curves[1];
   j["points"]["b"] = curves[2];
   return j.dump();
+}
+
+bool Driver::send_led_curve(int channel, const std::string &curve) {
+  if (channel >= Constants::NUM_LEDS) {
+    return false;
+  }
+
+  nlohmann::json j = nlohmann::json::parse(curve);
+  std::array<std::vector<std::tuple<float, float>>, Constants::NUM_LED_CHANNELS>
+      curves;
+  curves[0] = j["points"]["r"].get<std::vector<std::tuple<float, float>>>();
+  curves[1] = j["points"]["g"].get<std::vector<std::tuple<float, float>>>();
+  curves[2] = j["points"]["b"].get<std::vector<std::tuple<float, float>>>();
+
+  for (const auto &temp_curve : curves) {
+    if (temp_curve.size() > Constants::POINTS_PER_CURVE) {
+      return false;
+    }
+  }
+
+  auto all_successful = true;
+  for (auto i = 0; i < Constants::NUM_LED_CHANNELS; i++) {
+    const auto &temp_curve = curves[i];
+    CurveCommandParameters curve_command = {
+        .channel = static_cast<uint8_t>(channel),
+        .curve_type = CurveType::LED_CURVE,
+        .rgb_channel = (CurveChannel)i,
+        .curve_length = static_cast<uint16_t>(temp_curve.size())};
+
+    if (!send_curve_(curve_command, temp_curve)) {
+      all_successful = false;
+    }
+  }
+
+  return all_successful;
 }
 
 std::string Driver::get_all_fan_rpms() {

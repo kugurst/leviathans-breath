@@ -21,7 +21,7 @@
 
 namespace LB {
 const uint8_t HID_BUF_SIZE = 64;
-const uint8_t HID_TIMEOUT = 100;
+const uint16_t HID_TIMEOUT = 1000;
 const uint16_t CHECK_DELAY_US = 2000;
 
 // All commands are issued by the master
