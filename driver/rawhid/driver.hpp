@@ -59,7 +59,6 @@ class Driver {
 public:
   bool connect();
   inline bool is_connected() { return sync(); };
-  bool disconnect();
 
   bool sync();
 

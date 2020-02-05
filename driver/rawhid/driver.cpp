@@ -13,7 +13,7 @@
 #include "hid.h"
 
 #include "nlohmann/json.hpp"
-// #include "hidapi/hidapi.h"
+
 
 #define RECEIVE_BUF(buf, ret)                                                  \
   {                                                                            \
@@ -74,16 +74,6 @@ bool Driver::connect() {
 #ifdef DEBUG
   std::cout << "found rawhid device" << std::endl;
 #endif
-  return true;
-}
-
-bool Driver::disconnect() {
-  if (driver_handle_ == DEFAULT_DRIVER_HANDLE) {
-    return true;
-  }
-
-  rawhid_close(driver_handle_);
-  driver_handle_ = DEFAULT_DRIVER_HANDLE;
   return true;
 }
 
