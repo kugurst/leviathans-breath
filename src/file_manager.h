@@ -4,7 +4,7 @@
 
 #include <SD.h>
 
-#include "constants.h"
+#include "constants.hpp"
 
 namespace LB {
 const char *CONFIG_FILE_NAME = "config.dat";

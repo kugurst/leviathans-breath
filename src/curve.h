@@ -2,7 +2,7 @@
 
 #include <array>
 
-#include "constants.h"
+#include "constants.hpp"
 
 namespace LB {
 const uint8_t LO = 0;

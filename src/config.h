@@ -7,7 +7,7 @@
 
 #include <MCP48xx.h>
 
-#include "constants.h"
+#include "constants.hpp"
 #include "fan.h"
 #include "led.h"
 #include "led_contol.h"

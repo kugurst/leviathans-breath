@@ -5,7 +5,7 @@
 #include <tuple>
 #include <vector>
 
-#include "constants.h"
+#include "constants.hpp"
 
 namespace LB {
 const uint8_t SYNC_RETRY_COUNT = 10;

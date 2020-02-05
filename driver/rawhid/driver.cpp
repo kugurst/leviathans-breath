@@ -1,4 +1,4 @@
-#include "driver.h"
+#include "driver.hpp"
 
 #include <cstdbool>
 #include <cstdint>
@@ -129,7 +129,7 @@ Driver::get_curve_(CurveCommandParameters curve_command) {
 
   uint8_t command;
   memcpy(&command, trx_buf_.data(), sizeof(uint8_t));
-  if (command != Command::GET_CURVE) {
+  if (command != static_cast<uint8_t>(Command::GET_CURVE)) {
     return {};
   }
 
@@ -301,7 +301,7 @@ std::string Driver::get_all_fan_rpms() {
 
   uint8_t command;
   memcpy(&command, trx_buf_.data(), sizeof(uint8_t));
-  if (command != Command::GET_ALL_RPM) {
+  if (command != static_cast<uint8_t>(Command::GET_ALL_RPM)) {
     return {};
   }
 
@@ -335,7 +335,7 @@ std::string Driver::get_all_temperatures() {
 
   uint8_t command;
   memcpy(&command, trx_buf_.data(), sizeof(uint8_t));
-  if (command != Command::GET_ALL_TEMPERATURE) {
+  if (command != static_cast<uint8_t>(Command::GET_ALL_TEMPERATURE)) {
     return {};
   }
 
@@ -369,7 +369,7 @@ std::string Driver::get_all_fan_parameters() {
 
   uint8_t command;
   memcpy(&command, trx_buf_.data(), sizeof(uint8_t));
-  if (command != Command::GET_ALL_FAN_PARAMETERS) {
+  if (command != static_cast<uint8_t>(Command::GET_ALL_FAN_PARAMETERS)) {
     return {};
   }
 
@@ -439,7 +439,7 @@ std::string Driver::get_all_led_parameters() {
 
   uint8_t command;
   memcpy(&command, trx_buf_.data(), sizeof(uint8_t));
-  if (command != Command::GET_ALL_LED_PARAMETERS) {
+  if (command != static_cast<uint8_t>(Command::GET_ALL_LED_PARAMETERS)) {
     return {};
   }
 

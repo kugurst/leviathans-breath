@@ -6,7 +6,7 @@
 #include <microsDelay.h>
 
 #include "circular_array.h"
-#include "constants.h"
+#include "constants.hpp"
 
 namespace LB {
 const uint8_t TEMPERATURE_RESOLUTION = 12;

@@ -4,7 +4,7 @@
 #include <array>
 #include <tuple>
 
-#include "constants.h"
+#include "constants.hpp"
 #include "utils.h"
 
 namespace LB {

@@ -15,7 +15,7 @@
 #include <microsDelay.h>
 #include <usb_rawhid.h>
 
-#include "constants.h"
+#include "constants.hpp"
 #include "curve.h"
 #include "file_manager.h"
 

@@ -2,7 +2,7 @@
 
 #include <microsDelay.h>
 
-#include "constants.h"
+#include "constants.hpp"
 #include "curve.h"
 #include "fan.h"
 #include "temperture.h"
