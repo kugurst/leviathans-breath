@@ -8,8 +8,10 @@ void LEDControl::init(LED &led) {
   update_delay_.start(LED_UPDATE_PERIOD_US);
 }
 
-void LEDControl::set_temperature_sensor(Temperature &sensor) {
+void LEDControl::set_temperature_sensor(Temperature &sensor,
+                                        int8_t sensor_idx) {
   sensor_ = &sensor;
+  sensor_idx_ = sensor_idx;
   time_controlled_ = false;
   current_time_step_ = 0;
 }
@@ -97,10 +99,12 @@ size_t LEDControl::serialize(ConfigMemType &buff, size_t offset) const {
   memcpy((void *)(((uint8_t *)buff.data()) + offset), (void *)&time_controlled_,
          sizeof(bool));
   offset += sizeof(bool);
-
   memcpy((void *)(((uint8_t *)buff.data()) + offset), (void *)&speed_,
          sizeof(CalculatorDimension));
   offset += sizeof(CalculatorDimension);
+  memcpy((void *)(((int8_t *)buff.data()) + offset), (void *)&sensor_idx_,
+         sizeof(int8_t));
+  offset += sizeof(int8_t);
 
   return offset - original_offset;
 }
@@ -125,10 +129,12 @@ size_t LEDControl::derialize(ConfigMemType &buff, size_t offset) {
   memcpy((void *)&time_controlled_, (void *)(((uint8_t *)buff.data()) + offset),
          sizeof(bool));
   offset += sizeof(bool);
-
   memcpy((void *)&speed_, (void *)(((uint8_t *)buff.data()) + offset),
          sizeof(CalculatorDimension));
   offset += sizeof(CalculatorDimension);
+  memcpy((void *)&sensor_idx_, (void *)(((uint8_t *)buff.data()) + offset),
+         sizeof(int8_t));
+  offset += sizeof(int8_t);
 
   return offset - original_offset;
 }

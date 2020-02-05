@@ -40,8 +40,9 @@ public:
   static const uint32_t NUM_TEMPERATURE_SENSORS = 2;
   static const uint32_t NUM_DACS = 7;
 
-  static const uint32_t CONFIG_SIZE_FANS = sizeof(uint16_t) + sizeof(bool);
-  static const uint32_t CONFIG_SIZE_LEDS = sizeof(uint16_t);
+  static const uint32_t CONFIG_SIZE_FANS =
+      sizeof(uint16_t) + sizeof(int8_t) + sizeof(bool);
+  static const uint32_t CONFIG_SIZE_LEDS = sizeof(uint16_t) + sizeof(int8_t);
   static const uint32_t NUM_CURVES = NUM_FANS + NUM_LEDS * NUM_LED_CHANNELS;
   static const uint32_t CONFIG_SPACE_BYTES = 512;
   static const uint32_t CURVE_BYTES =

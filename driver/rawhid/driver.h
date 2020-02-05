@@ -40,6 +40,7 @@ struct CurveCommandParameters {
 struct FanParameters {
   uint8_t channel;
   bool pwm_controlled;
+  uint8_t temperature_channel;
   float pwm;
   float voltage;
 };
@@ -48,6 +49,7 @@ struct LEDParameters {
   uint8_t channel;
   bool time_controlled;
   float speed_multiplier;
+  int8_t temperature_channel;
   float r_brightness;
   float g_brightness;
   float b_brightness;
@@ -70,11 +72,12 @@ public:
   std::string get_all_temperatures();
 
   std::string get_all_fan_parameters();
-  bool set_fan_parameters(int channel, bool pwm_controlled);
+  bool set_fan_parameters(int channel, bool pwm_controlled,
+                          int temperature_sensor_idx);
 
   std::string get_all_led_parameters();
   bool set_led_parameters(int channel, bool time_controlled,
-                          float speed_multiplier);
+                          float speed_multiplier, int temperature_sensor_idx);
 
 private:
   std::vector<std::tuple<float, float>>

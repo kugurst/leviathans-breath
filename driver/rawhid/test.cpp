@@ -163,6 +163,7 @@ TEST_F(DriverTest, GetFanParameters) {
   for (auto &fan_params : j["fans"]) {
     ASSERT_NO_THROW(fan_params["channel"].get<int>());
     ASSERT_NO_THROW(fan_params["pwm"].get<float>());
+    ASSERT_NO_THROW(fan_params["temperature_channel"].get<int>());
     ASSERT_NO_THROW(fan_params["pwm_controlled"].get<bool>());
     ASSERT_NO_THROW(fan_params["voltage"].get<float>());
   }
@@ -170,12 +171,15 @@ TEST_F(DriverTest, GetFanParameters) {
 
 TEST_F(DriverTest, SetFanParameters) {
   std::array<bool, Constants::NUM_FANS> pwm_controlled_set;
+  std::array<int, Constants::NUM_FANS> temperature_sensors_set;
 
   for (auto i = 0; i < Constants::NUM_FANS; i++) {
     auto pwm_controlled = (float)rand() / (float)RAND_MAX > 0.5f;
-    ASSERT_TRUE(driver.set_fan_parameters(i, pwm_controlled));
+    auto sensor_idx = i % Constants::NUM_TEMPERATURE_SENSORS;
+    ASSERT_TRUE(driver.set_fan_parameters(i, pwm_controlled, sensor_idx));
 
     pwm_controlled_set[i] = pwm_controlled;
+    temperature_sensors_set[i] = sensor_idx;
   }
 
   auto all_fans = driver.get_all_fan_parameters();
@@ -186,6 +190,8 @@ TEST_F(DriverTest, SetFanParameters) {
   for (auto &fan_params : j["fans"]) {
     ASSERT_EQ(pwm_controlled_set[fan_params["channel"].get<int>()],
               fan_params["pwm_controlled"].get<bool>());
+    ASSERT_EQ(temperature_sensors_set[fan_params["channel"].get<int>()],
+              fan_params["temperature_channel"].get<int>());
   }
 }
 
@@ -199,6 +205,7 @@ TEST_F(DriverTest, GetLedParameters) {
     ASSERT_NO_THROW(led_params["channel"].get<int>());
     ASSERT_NO_THROW(led_params["time_controlled"].get<bool>());
     ASSERT_NO_THROW(led_params["speed_multiplier"].get<float>());
+    ASSERT_NO_THROW(led_params["temperature_channel"].get<int>());
     ASSERT_NO_THROW(led_params["r_brightness"].get<float>());
     ASSERT_NO_THROW(led_params["g_brightness"].get<float>());
     ASSERT_NO_THROW(led_params["b_brightness"].get<float>());
@@ -208,15 +215,18 @@ TEST_F(DriverTest, GetLedParameters) {
 TEST_F(DriverTest, SetLedParameters) {
   std::array<float, Constants::NUM_LEDS> speeds;
   std::array<bool, Constants::NUM_LEDS> time_controlled_set;
+  std::array<int, Constants::NUM_TEMPERATURE_SENSORS> temperature_sensors_set;
 
   for (auto i = 0; i < Constants::NUM_LEDS; i++) {
     auto speed_multiplier = (float)rand() / (float)RAND_MAX;
     auto time_controlled = (float)rand() / (float)RAND_MAX > 0.5f;
-    ASSERT_TRUE(
-        driver.set_led_parameters(i, time_controlled, speed_multiplier));
+    auto sensor_idx = i % Constants::NUM_TEMPERATURE_SENSORS;
+    ASSERT_TRUE(driver.set_led_parameters(i, time_controlled, speed_multiplier,
+                                          sensor_idx));
 
     speeds[i] = speed_multiplier;
     time_controlled_set[i] = time_controlled;
+    temperature_sensors_set[i] = sensor_idx;
   }
 
   auto all_leds = driver.get_all_led_parameters();
@@ -232,6 +242,8 @@ TEST_F(DriverTest, SetLedParameters) {
                     led_params["speed_multiplier"].get<float>() &&
                 led_params["speed_multiplier"].get<float>() <
                     speeds[led_params["channel"].get<int>()] + fuzz);
+    ASSERT_EQ(temperature_sensors_set[led_params["channel"].get<int>()],
+              led_params["temperature_channel"].get<int>());
   }
 }
 } // namespace LB

@@ -101,9 +101,17 @@ bool FileManager::load_config() {
 
   for (auto &fan_control : Config::fan_controls) {
     offset += fan_control.derialize(config_mem_map_, offset);
+    const auto sensor_idx = fan_control.get_temperature_sensor();
+    fan_control.set_temperature_sensor(
+        Config::get_temperature_sensor(sensor_idx), sensor_idx);
   }
   for (auto &led_control : Config::led_controls) {
     offset += led_control.derialize(config_mem_map_, offset);
+    const auto sensor_idx = led_control.get_temperature_sensor();
+    if (sensor_idx >= 0 && !led_control.is_time_controlled()) {
+      led_control.set_temperature_sensor(
+          Config::get_temperature_sensor(sensor_idx), sensor_idx);
+    }
   }
 
   return true;
@@ -129,18 +137,6 @@ void FileManager::load_defaults() {
           std::make_tuple((float)MAX_TIME_STEP / 2.0f, MAX_BRIGHTNESS));
       points[2] = std::move(std::make_tuple(MAX_TIME_STEP.getInteger(), 0.0f));
       curve.set_valid_points(3);
-
-      // if (curve_counter == 0) {
-      //   points[0] = std::move(std::make_tuple(0.0f, 0.0f));
-      //   points[1] = std::move(std::make_tuple(30.0f, 100.0f));
-      // } else if (curve_counter == 1) {
-      //   points[1] = std::move(std::make_tuple(0.0f, 0.0f));
-      //   points[1] = std::move(std::make_tuple(30.0f, 0.0f));
-      // } else if (curve_counter == 2) {
-      //   points[0] = std::move(std::make_tuple(0.0f, 100.0f));
-      //   points[1] = std::move(std::make_tuple(30.0f, 0.0f));
-      // }
-      // curve.set_valid_points(2);
 
       curve_counter++;
     }

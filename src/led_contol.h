@@ -26,7 +26,8 @@ public:
   get_curves_const() const {
     return curves_;
   };
-  void set_temperature_sensor(Temperature &sensor);
+  void set_temperature_sensor(Temperature &sensor, int8_t sensor_idx);
+  const inline int8_t get_temperature_sensor() const { return sensor_idx_; };
   void set_time_controlled(bool time_controlled) {
     time_controlled_ = time_controlled;
   };
@@ -42,6 +43,7 @@ private:
   std::array<Curve, Constants::NUM_LED_CHANNELS> curves_;
   LED *led_ = nullptr;
   Temperature *sensor_ = nullptr;
+  int8_t sensor_idx_ = -1;
   microsDelay update_delay_;
   bool time_controlled_ = true;
   CalculatorDimension speed_ = 0.25f;

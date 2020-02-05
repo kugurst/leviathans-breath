@@ -145,17 +145,17 @@ Driver::get_curve_(CurveCommandParameters curve_command) {
   std::vector<std::tuple<float, float>> points;
   points.reserve(curve_command.curve_length);
   for (uint i = 0; i < curve_command.curve_length; i++) {
+    if (packet_offset + sizeof(float) * 2 >= HID_BUF_SIZE) {
+      RECEIVE_BUF(trx_buf_, {});
+      packet_offset = 0;
+    }
+
     float x, y;
     memcpy(&x, trx_buf_.data() + packet_offset, sizeof(float));
     memcpy(&y, trx_buf_.data() + packet_offset + sizeof(float), sizeof(float));
     points.push_back(std::make_tuple(x, y));
 
     packet_offset += sizeof(float) * 2;
-    if (packet_offset + sizeof(float) * 2 >= HID_BUF_SIZE) {
-      RECEIVE_BUF(trx_buf_, {});
-
-      packet_offset = 0;
-    }
   }
 
   return points;
@@ -309,15 +309,16 @@ std::string Driver::get_all_fan_rpms() {
   uint16_t packet_offset = 0;
   RECEIVE_BUF(trx_buf_, {});
   for (uint i = 0; i < Constants::NUM_FANS; i++) {
+    if (packet_offset + sizeof(float) >= HID_BUF_SIZE) {
+      RECEIVE_BUF(trx_buf_, {});
+      packet_offset = 0;
+    }
+
     float rpm;
     memcpy(&rpm, trx_buf_.data() + packet_offset, sizeof(float));
     fan_rpms[i] = rpm;
 
     packet_offset += sizeof(float);
-    if (packet_offset + sizeof(float) >= HID_BUF_SIZE) {
-      RECEIVE_BUF(trx_buf_, {});
-      packet_offset = 0;
-    }
   }
 
   nlohmann::json j;
@@ -342,15 +343,16 @@ std::string Driver::get_all_temperatures() {
   uint16_t packet_offset = 0;
   RECEIVE_BUF(trx_buf_, {});
   for (uint i = 0; i < Constants::NUM_TEMPERATURE_SENSORS; i++) {
+    if (packet_offset + sizeof(float) >= HID_BUF_SIZE) {
+      RECEIVE_BUF(trx_buf_, {});
+      packet_offset = 0;
+    }
+
     float temperature;
     memcpy(&temperature, trx_buf_.data() + packet_offset, sizeof(float));
     temperatures[i] = temperature;
 
     packet_offset += sizeof(float);
-    if (packet_offset + sizeof(float) >= HID_BUF_SIZE) {
-      RECEIVE_BUF(trx_buf_, {});
-      packet_offset = 0;
-    }
   }
 
   nlohmann::json j;
@@ -375,35 +377,43 @@ std::string Driver::get_all_fan_parameters() {
   uint16_t packet_offset = 0;
   RECEIVE_BUF(trx_buf_, {});
   for (uint i = 0; i < Constants::NUM_FANS; i++) {
+    if (packet_offset + sizeof(FanParameters) >= HID_BUF_SIZE) {
+      RECEIVE_BUF(trx_buf_, {});
+      packet_offset = 0;
+    }
+
     FanParameters fan_params;
     memcpy(&fan_params, trx_buf_.data() + packet_offset, sizeof(FanParameters));
     all_fans[i] = fan_params;
 
     packet_offset += sizeof(FanParameters);
-    if (packet_offset + sizeof(FanParameters) >= HID_BUF_SIZE) {
-      RECEIVE_BUF(trx_buf_, {});
-      packet_offset = 0;
-    }
   }
 
   nlohmann::json j;
   for (auto &fan_params : all_fans) {
-    j["fans"].push_back(
-        nlohmann::json::object({{"channel", fan_params.channel},
-                                {"pwm_controlled", fan_params.pwm_controlled},
-                                {"pwm", fan_params.pwm},
-                                {"voltage", fan_params.voltage}}));
+    j["fans"].push_back(nlohmann::json::object(
+        {{"channel", fan_params.channel},
+         {"pwm_controlled", fan_params.pwm_controlled},
+         {"temperature_channel", fan_params.temperature_channel},
+         {"pwm", fan_params.pwm},
+         {"voltage", fan_params.voltage}}));
   }
   return j.dump();
 }
 
-bool Driver::set_fan_parameters(int channel, bool pwm_controlled) {
-  if (channel > Constants::NUM_FANS) {
+bool Driver::set_fan_parameters(int channel, bool pwm_controlled,
+                                int temperature_sensor_idx) {
+  if (channel >= Constants::NUM_FANS) {
+    return false;
+  }
+  if (temperature_sensor_idx >= Constants::NUM_TEMPERATURE_SENSORS) {
     return false;
   }
 
   FanParameters fan_params = {.channel = static_cast<uint8_t>(channel),
-                              .pwm_controlled = pwm_controlled};
+                              .pwm_controlled = pwm_controlled,
+                              .temperature_channel =
+                                  static_cast<uint8_t>(temperature_sensor_idx)};
 
   memset(trx_buf_.data(), 0, sizeof(uint8_t) * trx_buf_.size());
   trx_buf_[0] = (uint8_t)Command::SET_FAN_PARAMETERS;
@@ -416,7 +426,8 @@ bool Driver::set_fan_parameters(int channel, bool pwm_controlled) {
   memcpy(&ack, trx_buf_.data(), sizeof(FanParameters));
 
   return ack.channel == fan_params.channel &&
-         ack.pwm_controlled == fan_params.pwm_controlled;
+         ack.pwm_controlled == fan_params.pwm_controlled &&
+         ack.temperature_channel == fan_params.temperature_channel;
 }
 
 std::string Driver::get_all_led_parameters() {
@@ -436,15 +447,16 @@ std::string Driver::get_all_led_parameters() {
   uint16_t packet_offset = 0;
   RECEIVE_BUF(trx_buf_, {});
   for (uint i = 0; i < Constants::NUM_LEDS; i++) {
+    if (packet_offset + sizeof(LEDParameters) >= HID_BUF_SIZE) {
+      RECEIVE_BUF(trx_buf_, {});
+      packet_offset = 0;
+    }
+
     LEDParameters led_params;
     memcpy(&led_params, trx_buf_.data() + packet_offset, sizeof(LEDParameters));
     all_leds[i] = led_params;
 
     packet_offset += sizeof(LEDParameters);
-    if (packet_offset + sizeof(LEDParameters) >= HID_BUF_SIZE) {
-      RECEIVE_BUF(trx_buf_, {});
-      packet_offset = 0;
-    }
   }
 
   nlohmann::json j;
@@ -453,6 +465,7 @@ std::string Driver::get_all_led_parameters() {
         {{"channel", led_params.channel},
          {"time_controlled", led_params.time_controlled},
          {"speed_multiplier", led_params.speed_multiplier},
+         {"temperature_channel", led_params.temperature_channel},
          {"r_brightness", led_params.r_brightness},
          {"g_brightness", led_params.g_brightness},
          {"b_brightness", led_params.b_brightness}}));
@@ -461,14 +474,17 @@ std::string Driver::get_all_led_parameters() {
 }
 
 bool Driver::set_led_parameters(int channel, bool time_controlled,
-                                float speed_multiplier) {
+                                float speed_multiplier,
+                                int temperature_sensor_idx) {
   if (channel > Constants::NUM_FANS) {
     return false;
   }
 
   LEDParameters led_params = {.channel = static_cast<uint8_t>(channel),
                               .time_controlled = time_controlled,
-                              .speed_multiplier = speed_multiplier};
+                              .speed_multiplier = speed_multiplier,
+                              .temperature_channel =
+                                  static_cast<int8_t>(temperature_sensor_idx)};
 
   memset(trx_buf_.data(), 0, sizeof(uint8_t) * trx_buf_.size());
   trx_buf_[0] = (uint8_t)Command::SET_LED_PARAMETERS;
@@ -481,6 +497,7 @@ bool Driver::set_led_parameters(int channel, bool time_controlled,
   memcpy(&ack, trx_buf_.data(), sizeof(LEDParameters));
 
   return ack.channel == led_params.channel &&
-         ack.time_controlled == led_params.time_controlled;
+         ack.time_controlled == led_params.time_controlled &&
+         ack.temperature_channel == led_params.temperature_channel;
 }
 } // namespace LB

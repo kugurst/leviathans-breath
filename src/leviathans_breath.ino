@@ -22,6 +22,7 @@ void setup() {
   print_delay.start(250);
 }
 
+int print_count = 3;
 void loop() {
   LB::Config::loop_all();
   LB::Protocol::loop();
@@ -30,9 +31,17 @@ void loop() {
     print_delay.repeat();
 
 #ifndef DISABLE_SERIAL
+    if (print_count > 0) {
+      Serial.println(F("Ready!"));
+      print_count--;
+    }
+    Serial.print(F("LED[0] time controlled: "));
+    Serial.println(LB::Config::get_led_control(0).is_time_controlled());
+    Serial.print(F("LED[1] time controlled: "));
+    Serial.println(LB::Config::get_led_control(1).is_time_controlled());
     // Serial.println(LB::Config::get_fan(0).read_rpm());
     // Serial.println(LB::Config::get_fan(0).is_pwm_controlled());
-    Serial.println(LB::Config::get_temperature_sensor(0).read_temperature());
+    // Serial.println(LB::Config::get_temperature_sensor(0).read_temperature());
     // Serial.println(sizeof(LB::LEDControl) * LB::Constants::NUM_LEDS +
     // sizeof(LB::FanControl) * LB::Constants::NUM_FANS);
     // Serial.println(LB::Constants::POINTS_PER_CURVE);
@@ -44,7 +53,8 @@ void loop() {
 //  Example HID to Webcontrol - Basic transmit over HID
 //  By: Nathan Seidle (SparkFun Electronics)
 //  Date: January 6th, 2014
-//  This code is public domain but you buy me a beer if you use this and we meet someday (Beerware license).
+//  This code is public domain but you buy me a beer if you use this and we meet
+//  someday (Beerware license).
 
 //  This example shows how to transmit a counter over Raw HID.
 // */
@@ -54,8 +64,9 @@ void loop() {
 // //Declare hardware pins
 // byte statLED = 13; //Teeny 2.0++ has status LED on pin 6
 
-// long readingTime; //Controls how often we send our trimpot value to the computer
-// unsigned int counter = 0; //Used to show packet count sent to computer
+// long readingTime; //Controls how often we send our trimpot value to the
+// computer unsigned int counter = 0; //Used to show packet count sent to
+// computer
 
 // byte outgoingBuffer[16];
 

@@ -7,6 +7,12 @@ void FanControl::init(Fan &fan, Temperature &sensor) {
   update_delay_.start(UPDATE_PERIOD_US);
 }
 
+void FanControl::set_temperature_sensor(Temperature &new_sensor,
+                                        int8_t new_sensor_idx) {
+  sensor_ = &new_sensor;
+  sensor_idx_ = new_sensor_idx;
+}
+
 void FanControl::loop() {
   if (!update_delay_.justFinished()) {
     return;
@@ -41,7 +47,7 @@ void FanControl::loop() {
 }
 
 size_t FanControl::serialize(ConfigMemType &buff, size_t offset) const {
-  size_t original_offset = offset;
+  const size_t original_offset = offset;
 
   const auto &points = temperature_curve_.get_points_const();
   const auto valid_points = temperature_curve_.get_valid_points();
@@ -56,12 +62,15 @@ size_t FanControl::serialize(ConfigMemType &buff, size_t offset) const {
   memcpy((void *)(((uint8_t *)buff.data()) + offset), (void *)&pwm_controlled,
          sizeof(bool));
   offset += sizeof(bool);
+  memcpy((void *)(((uint8_t *)buff.data()) + offset), (void *)&sensor_idx_,
+         sizeof(int8_t));
+  offset += sizeof(int8_t);
 
   return offset - original_offset;
 }
 
 size_t FanControl::derialize(ConfigMemType &buff, size_t offset) {
-  size_t original_offset = offset;
+  const size_t original_offset = offset;
 
   auto &points = temperature_curve_.get_points();
   uint16_t valid_points;
@@ -76,6 +85,9 @@ size_t FanControl::derialize(ConfigMemType &buff, size_t offset) {
   memcpy((void *)&pwm_controlled, (void *)(((uint8_t *)buff.data()) + offset),
          sizeof(bool));
   offset += sizeof(bool);
+  memcpy((void *)&sensor_idx_, (void *)(((uint8_t *)buff.data()) + offset),
+         sizeof(int8_t));
+  offset += sizeof(int8_t);
 
   temperature_curve_.set_valid_points(valid_points);
   fan_->set_pwm_controlled(pwm_controlled);

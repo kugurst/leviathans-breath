@@ -55,6 +55,7 @@ struct CurveCommandParameters {
 struct FanParameters {
   uint8_t channel;
   bool pwm_controlled;
+  uint8_t temperature_channel;
   float pwm;
   float voltage;
 };
@@ -63,6 +64,7 @@ struct LEDParameters {
   uint8_t channel;
   bool time_controlled;
   float speed_multiplier;
+  int8_t temperature_channel;
   float r_brightness;
   float g_brightness;
   float b_brightness;

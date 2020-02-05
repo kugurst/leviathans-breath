@@ -41,6 +41,10 @@ bool send_buffer(std::array<uint8_t, HID_BUF_SIZE> &buf) {
     Serial.println(F("Failed to send buffer"));
     return false;
 #endif
+  } else {
+#ifndef DISABLE_SERIAL
+    Serial.println(F("Sent buffer successfully"));
+#endif
   }
   return true;
 }
@@ -100,11 +104,13 @@ void Protocol::process_command_(Command command,
   }
 }
 
-bool Protocol::echo_(std::array<uint8_t, HID_BUF_SIZE>& extra_data, uint8_t extra_data_offset) {
+bool Protocol::echo_(std::array<uint8_t, HID_BUF_SIZE> &extra_data,
+                     uint8_t extra_data_offset) {
   clear_buffer(tx_hid_buf_);
 
   tx_hid_buf_[0] = (uint8_t)Command::ECHO;
-  memcpy(tx_hid_buf_.data() + 1, extra_data.data() + extra_data_offset, HID_BUF_SIZE - extra_data_offset);
+  memcpy(tx_hid_buf_.data() + 1, extra_data.data() + extra_data_offset,
+         HID_BUF_SIZE - extra_data_offset);
   if (!send_buffer(tx_hid_buf_)) {
     return false;
   }
@@ -321,8 +327,11 @@ bool Protocol::get_all_fan_parameters_() {
   uint16_t packet_offset = 0;
   for (uint i = 0; i < Constants::NUM_FANS; i++) {
     auto &fan = LB::Config::get_fan(i);
+    auto &fan_control = LB::Config::get_fan_control(i);
     const FanParameters fan_params = {.channel = i,
                                       .pwm_controlled = fan.is_pwm_controlled(),
+                                      .temperature_channel =
+                                          fan_control.get_temperature_sensor(),
                                       .pwm = fan.get_pwm(),
                                       .voltage = fan.get_voltage()};
     memcpy(tx_hid_buf_.data() + packet_offset, &fan_params,
@@ -351,10 +360,27 @@ bool Protocol::set_fan_parameters_(FanParameters fan_command) {
   if (fan_command.channel >= Constants::NUM_FANS) {
     return false;
   }
+  if (fan_command.temperature_channel >= Constants::NUM_TEMPERATURE_SENSORS) {
+    return false;
+  }
+
+#ifndef DISABLE_SERIAL
+  Serial.print(F("Fan channel: "));
+  Serial.println(fan_command.channel);
+  Serial.print(F("Fan command temperature channel: "));
+  Serial.println(fan_command.temperature_channel);
+  Serial.print(F("Fan command temperature sensor index: "));
+  Serial.println((uint32_t)(void *)&Config::get_temperature_sensor(
+      fan_command.temperature_channel));
+#endif
 
   auto &fan = Config::get_fan(fan_command.channel);
+  auto &fan_control = Config::get_fan_control(fan_command.channel);
 
   fan.set_pwm_controlled(fan_command.pwm_controlled);
+  fan_control.set_temperature_sensor(
+      Config::get_temperature_sensor(fan_command.temperature_channel),
+      fan_command.temperature_channel);
 
   clear_buffer(tx_hid_buf_);
   memcpy(tx_hid_buf_.data(), &fan_command, sizeof(FanParameters));
@@ -373,15 +399,27 @@ bool Protocol::get_all_led_parameters_() {
     return false;
   }
 
+#ifndef DISABLE_SERIAL
+  Serial.println(F("LED start packet sent"));
+#endif
   clear_buffer(tx_hid_buf_);
   uint16_t packet_offset = 0;
   for (uint i = 0; i < Constants::NUM_LEDS; i++) {
     auto &led_control = LB::Config::get_led_control(i);
     auto &led = LB::Config::get_led(i);
+#ifndef DISABLE_SERIAL
+    Serial.print(F("LED["));
+    Serial.print(i);
+    Serial.print(F("] temperature sensor index: "));
+    Serial.println((uint8_t)led_control.get_temperature_sensor());
+    Serial.print(F("Size of LEDParameters: "));
+    Serial.println(sizeof(LEDParameters));
+#endif
     const LEDParameters led_params = {
         .channel = i,
         .time_controlled = led_control.is_time_controlled(),
         .speed_multiplier = (float)led_control.get_speed(),
+        .temperature_channel = led_control.get_temperature_sensor(),
         .r_brightness = led.get_r_brightness(),
         .g_brightness = led.get_g_brightness(),
         .b_brightness = led.get_b_brightness()};
@@ -403,6 +441,9 @@ bool Protocol::get_all_led_parameters_() {
     }
   }
 
+#ifndef DISABLE_SERIAL
+  Serial.println(F("Completed get all led parameters"));
+#endif
   return true;
 }
 
@@ -411,12 +452,24 @@ bool Protocol::set_led_parameters_(LEDParameters led_command) {
   if (led_command.channel >= Constants::NUM_LEDS) {
     return false;
   }
+  if (led_command.temperature_channel >= Constants::NUM_TEMPERATURE_SENSORS) {
+    return false;
+  }
 
   auto &led_control = Config::get_led_control(led_command.channel);
   auto &led = Config::get_led(led_command.channel);
 
-  led_control.set_time_controlled(led_command.time_controlled);
   led_control.set_speed(led_command.speed_multiplier);
+  if (led_command.temperature_channel >= 0) {
+    led_control.set_temperature_sensor(
+        Config::get_temperature_sensor(led_command.temperature_channel),
+        led_command.temperature_channel);
+  } else {
+#ifndef DISABLE_SERIAL
+    Serial.println(F("Skipping setting temperature channel"));
+#endif
+  }
+  led_control.set_time_controlled(led_command.time_controlled);
 
   clear_buffer(tx_hid_buf_);
   memcpy(tx_hid_buf_.data(), &led_command, sizeof(LEDParameters));
