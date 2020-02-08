@@ -16,8 +16,8 @@ TARGET = $(PROG)
 CXX = clang++
 CC = clang++
 # STRIP = strip
-CFLAGS = -Wall -O2 -DOS_$(OS) -I./FixedPoints/src -DDRIVER -DFIXED_POINTS_USE_NAMESPACE -g -DDISABLE_SERIAL
-CXXFLAGS = -Wall -O2 -DOS_$(OS) -I./FixedPoints/src -DDRIVER -DFIXED_POINTS_USE_NAMESPACE -g -DDISABLE_SERIAL
+CFLAGS = -Wall -O2 -DOS_$(OS) -I./FixedPoints/src -DDRIVER -DFIXED_POINTS_USE_NAMESPACE -g -DDISABLE_SERIAL -DTEST
+CXXFLAGS = -Wall -O2 -DOS_$(OS) -I./FixedPoints/src -DDRIVER -DFIXED_POINTS_USE_NAMESPACE -g -DDISABLE_SERIAL -DTEST
 LDFLAGS = -g
 LIBS = -lusb -lgtest
 else ifeq ($(OS), MACOSX)
@@ -61,7 +61,7 @@ $(PROG).dmg: $(PROG)
 hid.o: hid_$(OS).c hid.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-driver.o: driver.cpp driver.h
+driver.o: driver.cpp driver.hpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 clean:

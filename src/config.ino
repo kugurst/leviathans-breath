@@ -158,11 +158,11 @@ void Config::init_led_control_() {
 }
 
 void Config::init() {
-  fan_pre_init();
-  temperature_pre_init();
-
   SPI.setMOSI(MOSI_PIN);
   SPI.setSCK(SCK_PIN);
+
+  fan_pre_init();
+  temperature_pre_init();
 
   init_dacs_();
   init_fans_();

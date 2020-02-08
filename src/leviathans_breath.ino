@@ -49,60 +49,29 @@ void loop() {
   }
 }
 
-//     /*
-//  Example HID to Webcontrol - Basic transmit over HID
-//  By: Nathan Seidle (SparkFun Electronics)
-//  Date: January 6th, 2014
-//  This code is public domain but you buy me a beer if you use this and we meet
-//  someday (Beerware license).
 
-//  This example shows how to transmit a counter over Raw HID.
-// */
+// #include <memory>
 
-// #include "usb_rawhid.h"
+// #include <MCP48xx.h>
+// #include <SPI.h>
 
-// //Declare hardware pins
-// byte statLED = 13; //Teeny 2.0++ has status LED on pin 6
+// std::unique_ptr<MCP4822> dac;
 
-// long readingTime; //Controls how often we send our trimpot value to the
-// computer unsigned int counter = 0; //Used to show packet count sent to
-// computer
+// void setup() {
+//   SPI.setMOSI(27);
+//   SPI.setSCK(28);
 
-// byte outgoingBuffer[16];
+//   dac = std::make_unique<MCP4822>(26);
 
-// void setup()
-// {
-//   //Blink to show we're alive
-//   pinMode(statLED, OUTPUT);
-//   for(int i = 0 ; i < 5 ; i++)
-//   {
-//     digitalWrite(statLED, HIGH);
-//     delay(25);
-//     digitalWrite(statLED, HIGH);
-//     delay(25);
-//   }
-//   digitalWrite(statLED, HIGH); //Turn off LED
-
-//   //Fill the buffer with static numbers
-//   for(int x = 0 ; x < 16 ; x++)
-//     outgoingBuffer[x] = x;
-
-//   readingTime = millis();
+//   dac->init();
+//   dac->turnOnChannelA();
+//   dac->turnOnChannelB();
+//   dac->setGainA(MCP4822::High);
+//   dac->setGainB(MCP4822::High);
 // }
 
-// void loop()
-// {
-//   //Send sensor readings to computer every 30ms, about 33Hz
-//   if (millis() - readingTime > 1000) {
-//     readingTime += 1000;
-
-//     //Fill the tail end with a counter
-//     outgoingBuffer[14] = counter >> 8; //MSB
-//     outgoingBuffer[15] = counter & 0xFF; //LSB
-//     counter++;
-
-//     //Send the read frame to the computer
-//     int response = RawHID.send(outgoingBuffer, 100);
-
-//   }
+// void loop() {
+//   auto voltage = 12.0f;
+//   dac->setVoltageA(1024.0f / 3.0f * voltage);
+//   dac->updateDAC();
 // }

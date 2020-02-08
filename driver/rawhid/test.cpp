@@ -7,7 +7,7 @@
 
 #include "nlohmann/json.hpp"
 
-#include "driver.h"
+#include "driver.hpp"
 
 namespace LB {
 static Driver driver;
@@ -15,7 +15,7 @@ class SetupEnvironment : public ::testing::Environment {
 public:
   ~SetupEnvironment() override{};
   void SetUp() override { ASSERT_TRUE(driver.connect()); }
-  void TearDown() override { ASSERT_TRUE(driver.disconnect()); }
+  void TearDown() override {}
 };
 
 class DriverTest : public ::testing::Test {
