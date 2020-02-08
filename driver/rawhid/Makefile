@@ -14,18 +14,18 @@ PROG = test
 ifeq ($(OS), LINUX)
 TARGET = $(PROG)
 CXX = clang++
-CC = clang++
+CC = clang
 # STRIP = strip
-CFLAGS = -Wall -O2 -DOS_$(OS) -I./FixedPoints/src -DDRIVER -DFIXED_POINTS_USE_NAMESPACE -g -DDISABLE_SERIAL -DTEST
-CXXFLAGS = -Wall -O2 -DOS_$(OS) -I./FixedPoints/src -DDRIVER -DFIXED_POINTS_USE_NAMESPACE -g -DDISABLE_SERIAL -DTEST
+CFLAGS = -Wall -O2 -DOS_$(OS) -I./FixedPoints/src -DDRIVER -DFIXED_POINTS_USE_NAMESPACE -g -DDISABLE_SERIAL
+CXXFLAGS = -Wall -O2 -DOS_$(OS) -I./FixedPoints/src -DDRIVER -DFIXED_POINTS_USE_NAMESPACE -g -DDISABLE_SERIAL
 LDFLAGS = -g
-LIBS = -lusb -lgtest
+LIBS = -lusb -lgtest -lstdc++
 else ifeq ($(OS), MACOSX)
 TARGET = $(PROG).dmg
 SDK = /Developer/SDKs/MacOSX10.5.sdk
 ARCH = -mmacosx-version-min=10.5 -arch ppc -arch i386
 CXX = clang++
-CC = clang++
+CC = clang
 # STRIP = strip
 CFLAGS = -Wall -O2 -DOS_$(OS) -isysroot $(SDK) $(ARCH) -I./FixedPoints/src -DDRIVER -DFIXED_POINTS_USE_NAMESPACE -g -DDISABLE_SERIAL
 CXXFLAGS = -Wall -O2 -DOS_$(OS) -isysroot $(SDK) $(ARCH) -I./FixedPoints/src -DDRIVER -DFIXED_POINTS_USE_NAMESPACE -g -DDISABLE_SERIAL
@@ -34,7 +34,7 @@ LIBS = $(ARCH) -Wl,-syslibroot,$(SDK) -framework IOKit -framework CoreFoundation
 else ifeq ($(OS), WINDOWS)
 TARGET = $(PROG).exe
 CC = i586-mingw32msvc-gcc
-# STRIP = i586-mingw32msvc-strip
+# STRIP = 	i586-mingw32msvc-strip
 CFLAGS = -Wall -O2 -DOS_$(OS) -I./FixedPoints/src -DDRIVER -DFIXED_POINTS_USE_NAMESPACE -g -DDISABLE_SERIAL
 CXXFLAGS = -Wall -O2 -DOS_$(OS) -I./FixedPoints/src -DDRIVER -DFIXED_POINTS_USE_NAMESPACE -g -DDISABLE_SERIAL
 LDFLAGS = -g

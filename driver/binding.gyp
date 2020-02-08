@@ -12,6 +12,9 @@
       "libraries" : [
         '-lusb'
       ],
+      # "ldflags" : [
+      #   '-Wl,-z,defs'
+      # ]
     }
   ]
 }

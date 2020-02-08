@@ -10,13 +10,7 @@
 #include <tuple>
 #include <vector>
 
-#ifdef TEST
 #include "hid.h"
-#else
-extern "C" {
-#include "hid.h"
-}
-#endif
 
 #include "nlohmann/json.hpp"
 
