@@ -1,1 +1,0 @@
-../driver/binding.gyp

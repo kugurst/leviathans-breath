@@ -1,0 +1,15 @@
+{
+  "name": "leviathans_breath_driver",
+  "version": "1.0.0",
+  "description": "Native Node Module Driver for Leviathan's Breath Fan+LED Control",
+  "main": "./build/Release/leviathans_breath.node",
+  "keywords": [
+    "driver",
+    "fan",
+    "controller",
+    "led"
+  ],
+  "author": "Mark Aligbe",
+  "license": "MIT",
+  "gypfile": true
+}
