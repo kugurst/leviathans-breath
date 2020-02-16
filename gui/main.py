@@ -2,8 +2,9 @@ import sys
 import pyqtgraph as pg
 import qdarkstyle
 
-import styled_gui
+import driver_process
 import leviathans_breath
+import styled_gui
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -17,28 +18,41 @@ def setup_gui():
         css = css_file.read()
     app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5') + "\n" + css)
 
-    mw_main = QtWidgets.QMainWindow()
     ui = styled_gui.StyledGui()
-    ui.setupUi(mw_main)
+    ui.setupUi()
 
-    return ui, mw_main, app
-
-
-def setup_driver():
-    driver = leviathans_breath.Driver()
-    return driver
+    return ui, app
 
 
 def main():
-    driver = setup_driver()
-    print(driver.connect())
-    print(driver.get_all_temperatures())
-    print(driver.get_fan_curve(1))
-    ui, mw_main, app = setup_gui()
+    driver_process.start_driver_process()
 
-    mw_main.show()
-    sys.exit(app.exec_())
+    print(driver_process.connect())
+    print(driver_process.is_connected())
+    print(driver_process.sync())
+    print(driver_process.get_fan_curve(1))
+    print(driver_process.get_led_curve(1))
+    print(driver_process.get_all_fan_rpms())
+    print(driver_process.get_all_temperatures())
+    print(driver_process.get_all_fan_parameters())
+    print(driver_process.get_all_led_parameters())
+
+    print(leviathans_breath.NUM_FANS())
+    print(leviathans_breath.NUM_LEDS())
+    print(leviathans_breath.NUM_LED_CHANNELS())
+    print(leviathans_breath.NUM_TEMPERATURE_SENSORS())
+    print(leviathans_breath.POINTS_PER_CURVE())
+
+    ui, app = setup_gui()
+    ui.show()
+
+    ret = app.exec_()
+
+    sys.exit(ret)
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    finally:
+        driver_process.stop_driver_process()

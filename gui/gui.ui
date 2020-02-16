@@ -28,16 +28,19 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-246</y>
+          <y>-248</y>
           <width>787</width>
-          <height>817</height>
+          <height>819</height>
          </rect>
         </property>
-        <layout class="QGridLayout" name="gridLayout_4">
+        <layout class="QGridLayout" name="gl_sawc_chart">
          <item row="1" column="0">
           <widget class="QGroupBox" name="gb_curve_editor">
            <property name="title">
             <string>Fan Curve Editor</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
            </property>
            <layout class="QGridLayout" name="gridLayout_12">
             <item row="0" column="0">
@@ -47,37 +50,13 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QFrame" name="f_fan_curve_ph">
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <layout class="QGridLayout" name="gl_fan_curve_ph">
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="rightMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <property name="spacing">
-                <number>0</number>
-               </property>
-              </layout>
-             </widget>
-            </item>
             <item row="2" column="0">
              <widget class="QGroupBox" name="gb_fan_curve_options">
               <property name="title">
                <string>Options</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
               </property>
               <layout class="QFormLayout" name="formLayout">
                <item row="1" column="0" colspan="2">
@@ -180,6 +159,118 @@
               </layout>
              </widget>
             </item>
+            <item row="1" column="0">
+             <widget class="QFrame" name="f_fan_curve_ph">
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <layout class="QGridLayout" name="gl_fan_curve_ph">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <property name="spacing">
+                <number>0</number>
+               </property>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QGroupBox" name="gb_temperature_display">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="title">
+            <string>Temperature</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_6">
+            <item row="0" column="0">
+             <widget class="QFrame" name="f_temperature_display_anim">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <layout class="QVBoxLayout" name="vl_temperature_display_anim">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QComboBox" name="cb_temperature_display_selection">
+                 <property name="editable">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QFrame" name="f_temperature_display_ph">
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QGridLayout" name="gl_temperature_display_ph">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
+                 </layout>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>
@@ -187,6 +278,9 @@
           <widget class="QGroupBox" name="gb_led_curve_editor">
            <property name="title">
             <string>LED Curve Editor</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
            </property>
            <layout class="QGridLayout" name="gridLayout_14">
             <item row="1" column="0">
@@ -207,7 +301,7 @@
                   <property name="frameShadow">
                    <enum>QFrame::Raised</enum>
                   </property>
-                  <layout class="QGridLayout" name="gl_tw_led_channel_ph">
+                  <layout class="QGridLayout" name="gl_tw_led_channel_t_r_ph">
                    <property name="leftMargin">
                     <number>0</number>
                    </property>
@@ -309,6 +403,9 @@
              <widget class="QGroupBox" name="gb_led_curve_options">
               <property name="title">
                <string>Options</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
               </property>
               <layout class="QGridLayout" name="gridLayout_16">
                <item row="4" column="0" colspan="2">
@@ -466,49 +563,6 @@
            </layout>
           </widget>
          </item>
-         <item row="0" column="0">
-          <widget class="QGroupBox" name="gb_temperature_display">
-           <property name="title">
-            <string>Temperature</string>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_6">
-            <item row="1" column="0">
-             <widget class="QComboBox" name="cb_temperature_display_selection">
-              <property name="editable">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QFrame" name="f_temperature_display_ph">
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <layout class="QGridLayout" name="gl_temperature_display_ph">
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="rightMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <property name="spacing">
-                <number>0</number>
-               </property>
-              </layout>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
         </layout>
        </widget>
       </widget>
@@ -637,7 +691,6 @@
  </widget>
  <tabstops>
   <tabstop>sa_chart</tabstop>
-  <tabstop>cb_temperature_display_selection</tabstop>
   <tabstop>cb_fan_curve_selection</tabstop>
   <tabstop>cb_fan_options_preset</tabstop>
   <tabstop>pb_fan_options_save</tabstop>
