@@ -1,3 +1,4 @@
 *.o
 vgcore.*
 test
+*.so
