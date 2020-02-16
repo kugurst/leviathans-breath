@@ -5,3 +5,14 @@
 .vscode/ipch
 *.bak
 node_modules
+
+.vscode/settings.json
+app-webpack/
+app/
+electron-quick-start/
+electron-webpack-quick-start/
+gui/main_gui.py
+gui/test_spin.py
+leviathans_breath_web/
+web/
+
