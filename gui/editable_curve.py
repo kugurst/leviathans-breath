@@ -7,15 +7,23 @@ from pyqtgraph.Qt import QtCore, QtGui
 class EditableCurve(pg.GraphItem):
     def __init__(self):
         self.dragPoint = None
-        self.dragOffset = None
-        self.dragOffsetx = None
+        self.drag_offset_y_ = None
+        self.drag_offset_x_ = None
+
+        self.min_x = 0
+        self.max_x = 100
+        self.min_y = 0
+        self.max_y = 100
+
+        self.callback = None
+
         pg.GraphItem.__init__(self)
 
     def setData(self, **kwds):
         self.data = kwds
         if 'pos' in self.data:
             npts = self.data['pos'].shape[0]
-            self.data['adj'] = np.column_stack((np.arange(0, npts-1), np.arange(1, npts)))
+            self.data['adj'] = np.column_stack((np.arange(0, npts - 1), np.arange(1, npts)))
             self.data['data'] = np.empty(npts, dtype=[('index', int)])
             self.data['data']['index'] = np.arange(npts)
         self.updateGraph()
@@ -36,9 +44,11 @@ class EditableCurve(pg.GraphItem):
                 return
             self.dragPoint = pts[0]
             ind = pts[0].data()[0]
-            self.dragOffset = self.data['pos'][ind][1] - pos[1]
-            self.dragOffsetx = self.data['pos'][ind][0] - pos[0]
+            self.drag_offset_y_ = self.data['pos'][ind][1] - pos[1]
+            self.drag_offset_x_ = self.data['pos'][ind][0] - pos[0]
         elif ev.isFinish():
+            if self.callback:
+                self.callback(self.dragPoint.data()[0])
             self.dragPoint = None
             return
         else:
@@ -47,14 +57,15 @@ class EditableCurve(pg.GraphItem):
                 return
 
         ind = self.dragPoint.data()[0]
-        self.data['pos'][ind][1] = ev.pos()[1] + self.dragOffset
-        self.data['pos'][ind][0] = ev.pos()[0] + self.dragOffsetx
+        self.data['pos'][ind][1] = ev.pos()[1] + self.drag_offset_y_
+        self.data['pos'][ind][0] = ev.pos()[0] + self.drag_offset_x_
+
         self.updateGraph()
         ev.accept()
 
 
 class EditableCurveCollection(object):
-    def __init__(self, widget, graph):
+    def __init__(self, widget: pg.PlotWidget, graph: EditableCurve):
         self.widget = widget
         self.graph = graph
 

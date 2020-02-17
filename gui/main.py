@@ -5,6 +5,7 @@ import qdarkstyle
 import driver_process
 import leviathans_breath
 import styled_gui
+import styled_gui_controller
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -44,6 +45,8 @@ def main():
     print(leviathans_breath.POINTS_PER_CURVE())
 
     ui, app = setup_gui()
+    controller = styled_gui_controller.StyledGuiController(ui)
+    # controller.connect_signals()
     ui.show()
 
     ret = app.exec_()

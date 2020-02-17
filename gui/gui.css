@@ -20,6 +20,21 @@ QGridLayout {
   margin: 0;
 }
 
+#sawc_fan_status QLabel {
+  /*background-color: white;*/
+  /*position: fixed;*/
+  /*margin: 20px;*/
+}
+
+*[class=fan_container] {
+  background-color: white;
+}
+
+*[class=fan_container] QLabel {
+  background-color: white;
+  color: black;
+}
+
 /*QScrollBar:vertical { border: 2px solid grey; background: #32CC99; height: 15px; margin: 0px 20px 0 20px; }*/
 /*QScrollBar:vertical {*/
 /*    border: 1px solid #999999;*/
