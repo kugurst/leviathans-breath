@@ -21,8 +21,8 @@ class FanConfig(SerializableClass):
     def __init__(self):
         self.index = SerializableClass.INVALID_INDEX
         self.name = ""
-        self.temperature_source = SerializableClass.INVALID_INDEX
-        self.pwm_controlled = False
+        # self.temperature_source = SerializableClass.INVALID_INDEX
+        # self.pwm_controlled = False
 
 
 class TemperatureConfig(SerializableClass):
@@ -32,14 +32,13 @@ class TemperatureConfig(SerializableClass):
 
 
 class LEDConfig(SerializableClass):
-    SELF_SYNC_INDEX = -2
-
     def __init__(self):
         self.index = SerializableClass.INVALID_INDEX
         self.name = ""
-        self.temperature_source = SerializableClass.INVALID_INDEX
-        self.time_controlled = True
-        self.channel_sync = [LEDConfig.SELF_SYNC_INDEX for _ in range(leviathans_breath.NUM_LED_CHANNELS())]
+        # self.temperature_source = SerializableClass.INVALID_INDEX
+        # self.time_controlled = True
+        self.channel_sync = [SerializableClass.INVALID_INDEX]
+        self.channel_sync += [0 for _ in range(leviathans_breath.NUM_LED_CHANNELS() - 1)]
 
 
 class FanCurvePreset(SerializableClass):
@@ -52,7 +51,13 @@ class LEDCurvePreset(SerializableClass):
     def __init__(self):
         self.name = ""
         self.curve = [[] for _ in range(leviathans_breath.NUM_LED_CHANNELS())]  # type: list[list[tuple[float, float]]]
-        self.channel_sync = [LEDConfig.SELF_SYNC_INDEX for _ in range(leviathans_breath.NUM_LED_CHANNELS())]
+        self.channel_sync = [SerializableClass.INVALID_INDEX for _ in range(leviathans_breath.NUM_LED_CHANNELS())]
+
+
+class GuiConfig(SerializableClass):
+    def __init__(self):
+        self.temp_update_rate = 60
+        self.fan_update_rate = 60
 
 
 class DB(object):
@@ -61,6 +66,7 @@ class DB(object):
     TEMPERATURE_CONFIGS_KEY = "temperatures"
     FAN_PRESET_CONFIGS_KEY = "fan_presets"
     LED_PRESET_CONFIGS_KEY = "led_presets"
+    GUI_CONFIG_KEY = "gui"
 
     def __init__(self, file_name: str = None):
         self.file_name = file_name
@@ -70,6 +76,7 @@ class DB(object):
         self.temperature_configs = []  # type: list[TemperatureConfig]
         self.fan_presets = []  # type: list[FanCurvePreset]
         self.led_presets = []  # type: list[LEDCurvePreset]
+        self.gui_config = GuiConfig()
 
         self.fan_configs_name_map_ = dict()
         self.led_configs_name_map_ = dict()
@@ -96,13 +103,13 @@ class DB(object):
             config = FanConfig()
             config.index = idx
             config.name = "FAN{}".format(idx + 1)
-            config.temperature_source = 0
+            # config.temperature_source = 0
             ret.fan_configs.append(config)
         for idx in range(leviathans_breath.NUM_LEDS()):
             config = LEDConfig()
             config.index = idx
             config.name = "LED{}".format(idx + 1)
-            config.temperature_source = 0
+            # config.temperature_source = 0
             ret.led_configs.append(config)
         for idx in range(leviathans_breath.NUM_TEMPERATURE_SENSORS()):
             config = TemperatureConfig()
@@ -118,6 +125,7 @@ class DB(object):
         store[DB.FAN_CONFIGS_KEY] = [fan_config.to_dict() for fan_config in self.fan_configs]
         store[DB.LED_CONFIGS_KEY] = [led_config.to_dict() for led_config in self.led_configs]
         store[DB.TEMPERATURE_CONFIGS_KEY] = [temp_config.to_dict() for temp_config in self.temperature_configs]
+        store[DB.GUI_CONFIG_KEY] = self.gui_config.to_dict()
         if self.fan_presets:
             store[DB.FAN_PRESET_CONFIGS_KEY] = [fan_preset.to_dict() for fan_preset in self.fan_presets]
         if self.led_presets:
@@ -162,6 +170,8 @@ class DB(object):
         if DB.LED_PRESET_CONFIGS_KEY in store:
             for preset in store[DB.LED_PRESET_CONFIGS_KEY]:
                 self.led_presets.append(LEDCurvePreset.from_dict(preset))
+
+        self.gui_config = GuiConfig.from_dict(store[DB.GUI_CONFIG_KEY])
 
     def __str__(self):
         return yaml.dump(self.to_dict())

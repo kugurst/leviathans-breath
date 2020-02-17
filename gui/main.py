@@ -45,8 +45,7 @@ def main():
     print(leviathans_breath.POINTS_PER_CURVE())
 
     ui, app = setup_gui()
-    controller = styled_gui_controller.StyledGuiController(ui)
-    # controller.connect_signals()
+    styled_gui_controller.StyledGuiController(ui)
     ui.show()
 
     ret = app.exec_()

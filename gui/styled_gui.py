@@ -145,6 +145,7 @@ class StyledGui(gui.Ui_mw_main, QtWidgets.QMainWindow):
 
             spinning_fan_frame.setFixedHeight(spinning_fan.pixmap().height())
             spinning_fan_frame.setFixedWidth(spinning_fan.pixmap().height())
+            spinning_fan_frame.setProperty("class", "img_frame")
             fan_info_layout.setAlignment(spinning_fan_frame, QtCore.Qt.AlignHCenter)
 
             rpm_label = QtWidgets.QLabel("2600 RPM")

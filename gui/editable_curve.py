@@ -28,6 +28,13 @@ class EditableCurve(pg.GraphItem):
             self.data['data']['index'] = np.arange(npts)
         self.updateGraph()
 
+    def get_points(self) -> np.ndarray:
+        return self.data['pos']
+
+    def set_points(self, points: np.ndarray):
+        self.data['pos'] = points
+        self.updateGraph()
+
     def updateGraph(self):
         pg.GraphItem.setData(self, **self.data)
 

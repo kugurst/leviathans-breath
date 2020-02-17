@@ -32,9 +32,9 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>0</y>
+          <y>-300</y>
           <width>708</width>
-          <height>797</height>
+          <height>859</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gl_sawc_chart">
@@ -519,6 +519,112 @@
                      <property name="spacing">
                       <number>0</number>
                      </property>
+                     <item row="2" column="0">
+                      <widget class="QFrame" name="f_led_curve_temperature">
+                       <property name="frameShape">
+                        <enum>QFrame::StyledPanel</enum>
+                       </property>
+                       <property name="frameShadow">
+                        <enum>QFrame::Raised</enum>
+                       </property>
+                       <layout class="QHBoxLayout" name="horizontalLayout_4">
+                        <item>
+                         <widget class="QLabel" name="label_5">
+                          <property name="text">
+                           <string>Temperature Source:</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QComboBox" name="cb_led_curve_temperature_source_selection">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="editable">
+                           <bool>true</bool>
+                          </property>
+                          <property name="insertPolicy">
+                           <enum>QComboBox::NoInsert</enum>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item row="3" column="0">
+                      <widget class="QFrame" name="f_led_curve_control_selection">
+                       <property name="frameShape">
+                        <enum>QFrame::StyledPanel</enum>
+                       </property>
+                       <property name="frameShadow">
+                        <enum>QFrame::Raised</enum>
+                       </property>
+                       <layout class="QFormLayout" name="formLayout_2">
+                        <item row="0" column="0">
+                         <widget class="QRadioButton" name="rb_time_controlled">
+                          <property name="text">
+                           <string>Time Controlled</string>
+                          </property>
+                          <property name="checked">
+                           <bool>true</bool>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="1">
+                         <widget class="QRadioButton" name="rb_temperature_controlled">
+                          <property name="text">
+                           <string>Temperature Controlled</string>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item row="4" column="0">
+                      <widget class="QFrame" name="f_channel_sync_options">
+                       <property name="frameShape">
+                        <enum>QFrame::StyledPanel</enum>
+                       </property>
+                       <property name="frameShadow">
+                        <enum>QFrame::Raised</enum>
+                       </property>
+                       <layout class="QGridLayout" name="gridLayout_13">
+                        <item row="0" column="0">
+                         <widget class="QLabel" name="label">
+                          <property name="text">
+                           <string>Sync R Channel To...</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="0">
+                         <widget class="QComboBox" name="cb_r_channel_sync"/>
+                        </item>
+                        <item row="1" column="1">
+                         <widget class="QComboBox" name="cb_g_channel_sync"/>
+                        </item>
+                        <item row="0" column="1">
+                         <widget class="QLabel" name="label_2">
+                          <property name="text">
+                           <string>Sync G Channel To...</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="2">
+                         <widget class="QLabel" name="label_3">
+                          <property name="text">
+                           <string>Sync B Channel To...</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="2">
+                         <widget class="QComboBox" name="cb_b_channel_sync"/>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
                      <item row="0" column="0">
                       <widget class="QFrame" name="f_led_options_preset">
                        <property name="frameShape">
@@ -568,108 +674,43 @@
                        </layout>
                       </widget>
                      </item>
-                     <item row="2" column="0">
-                      <widget class="QFrame" name="f_led_curve_control_selection">
-                       <property name="frameShape">
-                        <enum>QFrame::StyledPanel</enum>
-                       </property>
-                       <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
-                       </property>
-                       <layout class="QFormLayout" name="formLayout_2">
-                        <item row="0" column="0">
-                         <widget class="QRadioButton" name="rb_time_controlled">
-                          <property name="text">
-                           <string>Time Controlled</string>
-                          </property>
-                          <property name="checked">
-                           <bool>true</bool>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="0" column="1">
-                         <widget class="QRadioButton" name="rb_temperature_controlled">
-                          <property name="text">
-                           <string>Temperature Controlled</string>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
-                      </widget>
-                     </item>
                      <item row="1" column="0">
-                      <widget class="QFrame" name="f_led_curve_temperature">
+                      <widget class="QFrame" name="frame">
                        <property name="frameShape">
                         <enum>QFrame::StyledPanel</enum>
                        </property>
                        <property name="frameShadow">
                         <enum>QFrame::Raised</enum>
                        </property>
-                       <layout class="QHBoxLayout" name="horizontalLayout_4">
+                       <layout class="QHBoxLayout" name="horizontalLayout_5">
                         <item>
-                         <widget class="QLabel" name="label_5">
+                         <widget class="QLabel" name="label_8">
                           <property name="text">
-                           <string>Temperature Source:</string>
+                           <string>Speed Multiplier:</string>
                           </property>
                          </widget>
                         </item>
                         <item>
-                         <widget class="QComboBox" name="cb_led_curve_temperature_source_selection">
+                         <widget class="QDoubleSpinBox" name="dsb_speed_multiplier">
                           <property name="sizePolicy">
                            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                             <horstretch>0</horstretch>
                             <verstretch>0</verstretch>
                            </sizepolicy>
                           </property>
-                          <property name="editable">
-                           <bool>true</bool>
+                          <property name="decimals">
+                           <number>3</number>
                           </property>
-                          <property name="insertPolicy">
-                           <enum>QComboBox::NoInsert</enum>
+                          <property name="minimum">
+                           <double>0.001000000000000</double>
                           </property>
-                         </widget>
-                        </item>
-                       </layout>
-                      </widget>
-                     </item>
-                     <item row="3" column="0">
-                      <widget class="QFrame" name="f_channel_sync_options">
-                       <property name="frameShape">
-                        <enum>QFrame::StyledPanel</enum>
-                       </property>
-                       <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
-                       </property>
-                       <layout class="QGridLayout" name="gridLayout_13">
-                        <item row="0" column="0">
-                         <widget class="QLabel" name="label">
-                          <property name="text">
-                           <string>Sync R Channel To...</string>
+                          <property name="singleStep">
+                           <double>0.010000000000000</double>
+                          </property>
+                          <property name="value">
+                           <double>0.250000000000000</double>
                           </property>
                          </widget>
-                        </item>
-                        <item row="1" column="0">
-                         <widget class="QComboBox" name="cb_r_channel_sync"/>
-                        </item>
-                        <item row="1" column="1">
-                         <widget class="QComboBox" name="cb_g_channel_sync"/>
-                        </item>
-                        <item row="0" column="1">
-                         <widget class="QLabel" name="label_2">
-                          <property name="text">
-                           <string>Sync G Channel To...</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="0" column="2">
-                         <widget class="QLabel" name="label_3">
-                          <property name="text">
-                           <string>Sync B Channel To...</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="1" column="2">
-                         <widget class="QComboBox" name="cb_b_channel_sync"/>
                         </item>
                        </layout>
                       </widget>
