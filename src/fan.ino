@@ -66,7 +66,10 @@ void Fan::set_pwm(float pwm) {
 void Fan::set_pwm_controlled(bool pwm_controlled) {
   pwm_controlled_ = pwm_controlled;
   if (pwm_controlled_) {
+    voltage_ = MAX_VOLTAGE;
     set_dac_(MAX_DAC_VALUE);
+  } else {
+    pwm_ = MAX_PWM;
   }
 }
 

@@ -35,10 +35,10 @@ void loop() {
       Serial.println(F("Ready!"));
       print_count--;
     }
-    Serial.print(F("LED[0] time controlled: "));
-    Serial.println(LB::Config::get_led_control(0).is_time_controlled());
-    Serial.print(F("LED[1] time controlled: "));
-    Serial.println(LB::Config::get_led_control(1).is_time_controlled());
+    // Serial.print(F("LED[0] time controlled: "));
+    // Serial.println(LB::Config::get_led_control(0).is_time_controlled());
+    // Serial.print(F("LED[1] time controlled: "));
+    // Serial.println(LB::Config::get_led_control(1).is_time_controlled());
     // Serial.println(LB::Config::get_fan(0).read_rpm());
     // Serial.println(LB::Config::get_fan(0).is_pwm_controlled());
     // Serial.println(LB::Config::get_temperature_sensor(0).read_temperature());

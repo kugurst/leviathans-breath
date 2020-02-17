@@ -143,7 +143,7 @@ void Config::init_fan_control_() {
     auto &fan = fans[i];
     auto &temperature_sensor = temperature_sensors[0];
 
-    fan_control.init(fan, temperature_sensor);
+    fan_control.init(fan, temperature_sensor, 0);
   }
 }
 

@@ -1,9 +1,10 @@
 #include "fan_control.h"
 
 namespace LB {
-void FanControl::init(Fan &fan, Temperature &sensor) {
+void FanControl::init(Fan &fan, Temperature &sensor, uint8_t sensor_idx) {
   fan_ = &fan;
   sensor_ = &sensor;
+  sensor_idx_ = sensor_idx;
   update_delay_.start(UPDATE_PERIOD_US);
 }
 

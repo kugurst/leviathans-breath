@@ -23,6 +23,13 @@ class SpinningLabelImage(QtWidgets.QLabel):
         if self._animation.state() != QtCore.QAbstractAnimation.Running:
             self._animation.start()
 
+    def stop_animation(self):
+        if self._animation.state() == QtCore.QAbstractAnimation.Running:
+            self._animation.stop()
+
+    def set_duration(self, duration):
+        self._animation.setDuration(duration)
+
     @QtCore.pyqtSlot(QtCore.QVariant)
     def on_valueChanged(self, value):
         t = QtGui.QTransform()

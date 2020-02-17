@@ -11,7 +11,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class FanSpinningAnimation(object):
-    def __init__(self, name_button: QtWidgets.QPushButton, rpm_label: QtWidgets.QLabel, v_p_label: QtWidgets.QLabel):
+    def __init__(self, fan: spinning_label_image.SpinningLabelImage, name_button: QtWidgets.QPushButton,
+                 rpm_label: QtWidgets.QLabel, v_p_label: QtWidgets.QLabel):
+        self.fan = fan
         self.name_button = name_button
         self.rpm_label = rpm_label
         self.v_p_label = v_p_label
@@ -30,7 +32,7 @@ class StyledGui(gui.Ui_mw_main, QtWidgets.QMainWindow):
         self.rgb_preview_buttons = []  # type: list[QtWidgets.QPushButton]
         self.fan_widgets = []  # type: list[FanSpinningAnimation]
         self.fan_curve = None  # type: editable_curve.EditableCurveCollection
-        self.temperature_series = None
+        self.temperature_series = None  # type: editable_curve.EditableCurveCollection
         self.parent = None
 
         self.gb_anims = dict()  # type: dict[QtWidgets.QGroupBox, GroupBoxAnimations]
@@ -158,7 +160,7 @@ class StyledGui(gui.Ui_mw_main, QtWidgets.QMainWindow):
 
             fan_info_frame.setProperty("class", "fan_container")
 
-            self.fan_widgets.append(FanSpinningAnimation(pb, rpm_label, v_p_label))
+            self.fan_widgets.append(FanSpinningAnimation(spinning_fan, pb, rpm_label, v_p_label))
 
     def init_led_previews(self):
         for idx in range(leviathans_breath.NUM_LEDS()):

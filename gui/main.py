@@ -28,22 +28,6 @@ def setup_gui():
 def main():
     driver_process.start_driver_process()
 
-    print(driver_process.connect())
-    print(driver_process.is_connected())
-    print(driver_process.sync())
-    print(driver_process.get_fan_curve(1))
-    print(driver_process.get_led_curve(1))
-    print(driver_process.get_all_fan_rpms())
-    print(driver_process.get_all_temperatures())
-    print(driver_process.get_all_fan_parameters())
-    print(driver_process.get_all_led_parameters())
-
-    print(leviathans_breath.NUM_FANS())
-    print(leviathans_breath.NUM_LEDS())
-    print(leviathans_breath.NUM_LED_CHANNELS())
-    print(leviathans_breath.NUM_TEMPERATURE_SENSORS())
-    print(leviathans_breath.POINTS_PER_CURVE())
-
     ui, app = setup_gui()
     styled_gui_controller.StyledGuiController(ui)
     ui.show()

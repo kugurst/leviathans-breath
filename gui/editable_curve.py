@@ -1,14 +1,15 @@
-import sys
+import math
 import numpy as np
 import pyqtgraph as pg
+import sys
 from pyqtgraph.Qt import QtCore, QtGui
 
 
 class EditableCurve(pg.GraphItem):
     def __init__(self):
         self.dragPoint = None
-        self.drag_offset_y_ = None
         self.drag_offset_x_ = None
+        self.drag_offset_y_ = None
 
         self.min_x = 0
         self.max_x = 100
@@ -38,6 +39,9 @@ class EditableCurve(pg.GraphItem):
     def updateGraph(self):
         pg.GraphItem.setData(self, **self.data)
 
+    def mousePressEvent(self, ev):
+        super(self.__class__, self).mousePressEvent(ev)
+
     def mouseDragEvent(self, ev):
         if ev.button() != QtCore.Qt.LeftButton:
             ev.ignore()
@@ -51,8 +55,8 @@ class EditableCurve(pg.GraphItem):
                 return
             self.dragPoint = pts[0]
             ind = pts[0].data()[0]
-            self.drag_offset_y_ = self.data['pos'][ind][1] - pos[1]
             self.drag_offset_x_ = self.data['pos'][ind][0] - pos[0]
+            self.drag_offset_y_ = self.data['pos'][ind][1] - pos[1]
         elif ev.isFinish():
             if self.callback:
                 self.callback(self.dragPoint.data()[0])
@@ -64,11 +68,43 @@ class EditableCurve(pg.GraphItem):
                 return
 
         ind = self.dragPoint.data()[0]
-        self.data['pos'][ind][1] = ev.pos()[1] + self.drag_offset_y_
-        self.data['pos'][ind][0] = ev.pos()[0] + self.drag_offset_x_
+        new_x = ev.pos()[0] + self.drag_offset_x_
+        new_y = ev.pos()[1] + self.drag_offset_y_
+
+        self.data['pos'][ind][0] = quarter_round(min(self.max_x, max(self.min_x, new_x)))
+        self.data['pos'][ind][1] = quarter_round(min(self.max_y, max(self.min_y, new_y)))
+
+        # print("x:", self.data['pos'][ind][0])
+        # print("y:", self.data['pos'][ind][1])
 
         self.updateGraph()
         ev.accept()
+
+
+def search(arr, x):
+    if x < arr[0][0]:
+        return arr[0], arr[0]
+    if x > arr[-1][0]:
+        return arr[-1], arr[-1]
+
+    lo = 0
+    hi = len(arr) - 1
+
+    while lo <= hi:
+        mid = math.floor((hi + lo) / 2)
+
+        if x < arr[mid][0]:
+            hi = mid - 1
+        elif x > arr[mid][0]:
+            lo = mid + 1
+        else:
+            return arr[mid], arr[mid]
+
+    return arr[hi], arr[lo]
+
+
+def quarter_round(x):
+    return np.round(x * 4) / 4
 
 
 class EditableCurveCollection(object):

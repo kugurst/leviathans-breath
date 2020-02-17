@@ -25,6 +25,8 @@ void Protocol::print_command_(Command command) {
     break;
   case Command::GET_ALL_TEMPERATURE:
     Serial.println(F("SEND ALL TEMPERATURE Received"));
+  case Command::SET_LED_PARAMETERS:
+    Serial.println(F("SET LED PARAMETERS Received"));
   default:
     break;
   }
@@ -448,16 +450,36 @@ bool Protocol::get_all_led_parameters_() {
 }
 
 bool Protocol::set_led_parameters_(LEDParameters led_command) {
-  Curve *curve = nullptr;
+#ifndef DISABLE_SERIAL
+  Serial.print(F("LED Command: [channel: "));
+  Serial.print(led_command.channel);
+  Serial.print(F(" , time_controlled: "));
+  Serial.print(led_command.time_controlled);
+  Serial.print(F(" , speed_multiplier: "));
+  Serial.print(led_command.speed_multiplier);
+  Serial.print(F(" , temperature_channel: "));
+  Serial.print(led_command.temperature_channel);
+  Serial.println(F("]"));
+#endif
+
   if (led_command.channel >= Constants::NUM_LEDS) {
+#ifndef DISABLE_SERIAL
+    Serial.println(
+        F("Selected channel is greater than number of available channels"));
+#endif
     return false;
   }
-  if (led_command.temperature_channel >= Constants::NUM_TEMPERATURE_SENSORS) {
-    return false;
+  if (!led_command.time_controlled) {
+    if (led_command.temperature_channel >= Constants::NUM_TEMPERATURE_SENSORS) {
+#ifndef DISABLE_SERIAL
+      Serial.println(
+          F("Selected channel is greater than number of available channels"));
+#endif
+      return false;
+    }
   }
 
   auto &led_control = Config::get_led_control(led_command.channel);
-  auto &led = Config::get_led(led_command.channel);
 
   led_control.set_speed(led_command.speed_multiplier);
   if (led_command.temperature_channel >= 0) {

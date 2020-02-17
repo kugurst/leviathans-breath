@@ -50,14 +50,15 @@ class FanCurvePreset(SerializableClass):
 class LEDCurvePreset(SerializableClass):
     def __init__(self):
         self.name = ""
-        self.curve = [[] for _ in range(leviathans_breath.NUM_LED_CHANNELS())]  # type: list[list[tuple[float, float]]]
+        self.curves = [[] for _ in range(leviathans_breath.NUM_LED_CHANNELS())]  # type: list[list[tuple[float, float]]]
         self.channel_sync = [SerializableClass.INVALID_INDEX for _ in range(leviathans_breath.NUM_LED_CHANNELS())]
 
 
 class GuiConfig(SerializableClass):
     def __init__(self):
         self.temp_update_rate = 60
-        self.fan_update_rate = 60
+        self.fan_update_rate = 2
+        self.led_update_rate = 60
 
 
 class DB(object):
@@ -78,21 +79,26 @@ class DB(object):
         self.led_presets = []  # type: list[LEDCurvePreset]
         self.gui_config = GuiConfig()
 
-        self.fan_configs_name_map_ = dict()
-        self.led_configs_name_map_ = dict()
-        self.temperature_configs_name_map_ = dict()
+        # self.fan_configs_name_map_ = dict()
+        # self.led_configs_name_map_ = dict()
+        # self.temperature_configs_name_map_ = dict()
         self.fan_presets_name_map_ = dict()
         self.led_presets_name_map_ = dict()
 
-    def init_maps_(self):
-        for name_map in [self.fan_configs_name_map_, self.led_configs_name_map_, self.temperature_configs_name_map_,
-                         self.fan_presets_name_map_, self.led_presets_name_map_]:
-            name_map.clear()
+        self.init_maps_()
 
-        self.fan_configs_name_map_ = {fan_config.name: fan_config for fan_config in self.fan_configs}
-        self.led_configs_name_map_ = {led_config.name: led_config for led_config in self.led_configs}
-        self.temperature_configs_name_map_ = {temperature_config.name: temperature_config for temperature_config
-                                              in self.temperature_configs}
+    def init_maps_(self):
+        self.fan_presets_name_map_.clear()
+        self.led_presets_name_map_.clear()
+
+        # for name_map in [self.fan_configs_name_map_, self.led_configs_name_map_, self.temperature_configs_name_map_,
+        #                  self.fan_presets_name_map_, self.led_presets_name_map_]:
+        #     name_map.clear()
+        #
+        # self.fan_configs_name_map_ = {fan_config.name: fan_config for fan_config in self.fan_configs}
+        # self.led_configs_name_map_ = {led_config.name: led_config for led_config in self.led_configs}
+        # self.temperature_configs_name_map_ = {temperature_config.name: temperature_config for temperature_config
+        #                                       in self.temperature_configs}
         self.fan_presets_name_map_ = {fan_preset.name: fan_preset for fan_preset in self.fan_presets}
         self.led_presets_name_map_ = {led_preset.name: led_preset for led_preset in self.led_presets}
 
@@ -173,23 +179,55 @@ class DB(object):
 
         self.gui_config = GuiConfig.from_dict(store[DB.GUI_CONFIG_KEY])
 
+        self.init_maps_()
+
+    def add_fan_preset(self, preset: FanCurvePreset):
+        self.add_to_preset_list_(preset, self.fan_presets, self.fan_presets_name_map_)
+
+    def add_led_preset(self, preset: LEDCurvePreset):
+        self.add_to_preset_list_(preset, self.led_presets, self.led_presets_name_map_)
+
+    def add_to_preset_list_(self, preset, preset_list, preset_map):
+        idx = -1
+        for candidate_idx, candidate_preset in enumerate(preset_list):
+            if candidate_preset.name == preset.name:
+                idx = candidate_idx
+                break
+
+        if idx >= 0:
+            for attr in vars(candidate_preset):
+                setattr(candidate_preset, attr, getattr(preset, attr))
+        else:
+            preset_list.append(preset)
+            preset_map[preset.name] = preset
+
     def __str__(self):
         return yaml.dump(self.to_dict())
 
-    def get_fan_config(self, name):
-        return self.fan_configs_name_map_[name]
+    # def get_fan_config(self, name):
+    #     return self.fan_configs_name_map_[name]
+    #
+    # def get_led_config(self, name):
+    #     return self.led_configs_name_map_[name]
+    #
+    # def get_temperature_config(self, name):
+    #     return self.temperature_configs[name]
 
-    def get_led_config(self, name):
-        return self.led_configs_name_map_[name]
-
-    def get_temperature_config(self, name):
-        return self.temperature_configs[name]
-
-    def get_fan_preset(self, name):
+    def get_fan_preset(self, name) -> FanCurvePreset:
         return self.fan_presets_name_map_[name]
 
-    def get_led_preset(self, name):
+    def get_led_preset(self, name) -> LEDCurvePreset:
         return self.led_presets_name_map_[name]
+
+    def delete_fan_preset(self, name):
+        preset = self.fan_presets_name_map_[name]
+        del self.fan_presets_name_map_[name]
+        self.fan_presets.remove(preset)
+
+    def delete_led_preset(self, name):
+        preset = self.led_presets_name_map_[name]
+        del self.led_presets_name_map_[name]
+        self.led_presets.remove(preset)
 
 
 def main():

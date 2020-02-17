@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1024</width>
-    <height>618</height>
+    <width>997</width>
+    <height>616</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,8 +32,8 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-300</y>
-          <width>708</width>
+          <y>0</y>
+          <width>681</width>
           <height>859</height>
          </rect>
         </property>
@@ -147,6 +147,13 @@
                          <widget class="QPushButton" name="pb_fan_options_load">
                           <property name="text">
                            <string>Load</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="pb_fan_options_delete">
+                          <property name="text">
+                           <string>Delete</string>
                           </property>
                          </widget>
                         </item>
@@ -671,6 +678,13 @@
                           </property>
                          </widget>
                         </item>
+                        <item>
+                         <widget class="QPushButton" name="pb_led_options_delete">
+                          <property name="text">
+                           <string>Delete</string>
+                          </property>
+                         </widget>
+                        </item>
                        </layout>
                       </widget>
                      </item>
@@ -783,7 +797,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>233</width>
-                <height>473</height>
+                <height>471</height>
                </rect>
               </property>
               <property name="sizePolicy">
@@ -840,7 +854,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1024</width>
+     <width>997</width>
      <height>24</height>
     </rect>
    </property>
@@ -881,6 +895,7 @@
   <tabstop>cb_fan_options_preset</tabstop>
   <tabstop>pb_fan_options_save</tabstop>
   <tabstop>pb_fan_options_load</tabstop>
+  <tabstop>pb_fan_options_delete</tabstop>
   <tabstop>cb_fan_curve_temperature_source_selection</tabstop>
   <tabstop>cb_pwm_controlled</tabstop>
   <tabstop>gb_led_curve_editor</tabstop>
@@ -890,6 +905,8 @@
   <tabstop>cb_led_options_preset</tabstop>
   <tabstop>pb_led_options_save</tabstop>
   <tabstop>pb_led_options_load</tabstop>
+  <tabstop>pb_led_options_delete</tabstop>
+  <tabstop>dsb_speed_multiplier</tabstop>
   <tabstop>cb_led_curve_temperature_source_selection</tabstop>
   <tabstop>rb_time_controlled</tabstop>
   <tabstop>rb_temperature_controlled</tabstop>

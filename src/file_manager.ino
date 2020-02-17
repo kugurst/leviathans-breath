@@ -102,8 +102,10 @@ bool FileManager::load_config() {
   for (auto &fan_control : Config::fan_controls) {
     offset += fan_control.derialize(config_mem_map_, offset);
     const auto sensor_idx = fan_control.get_temperature_sensor();
-    fan_control.set_temperature_sensor(
-        Config::get_temperature_sensor(sensor_idx), sensor_idx);
+    if (sensor_idx >= 0) {
+      fan_control.set_temperature_sensor(
+          Config::get_temperature_sensor(sensor_idx), sensor_idx);
+    }
   }
   for (auto &led_control : Config::led_controls) {
     offset += led_control.derialize(config_mem_map_, offset);
