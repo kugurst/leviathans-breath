@@ -1,3 +1,4 @@
+import constants
 import editable_curve
 import gui
 import leviathans_breath
@@ -101,10 +102,10 @@ class StyledGui(gui.Ui_mw_main, QtWidgets.QMainWindow):
 
         return label
 
-    def make_curve(self):
+    def make_curve(self, graph_type=editable_curve.EditableCurve):
         w = pg.PlotWidget(self.parent)
 
-        g = editable_curve.EditableCurve()
+        g = graph_type()
         w.addItem(g)
         w.getPlotItem().getViewBox().setMouseEnabled(x=False, y=False)
         x_axis = w.getPlotItem().getAxis("bottom")  # type: pg.AxisItem
@@ -118,13 +119,19 @@ class StyledGui(gui.Ui_mw_main, QtWidgets.QMainWindow):
         self.fan_curve = editable_curve.EditableCurveCollection(*self.make_curve())
         for _ in range(leviathans_breath.NUM_LED_CHANNELS()):
             self.rgb_channel_curves.append(editable_curve.EditableCurveCollection(*self.make_curve()))
-        self.temperature_series = editable_curve.EditableCurveCollection(*self.make_curve())
+        self.temperature_series = editable_curve.EditableCurveCollection(
+            *self.make_curve(graph_type=editable_curve.TimeSeriesCurve))
 
         self.gl_fan_curve_ph.addWidget(self.fan_curve.widget)
         self.gl_tw_led_channel_t_r_ph.addWidget(self.rgb_channel_curves[0].widget)
         self.gl_tw_led_channel_t_g_ph.addWidget(self.rgb_channel_curves[1].widget)
         self.gl_tw_led_channel_t_b_ph.addWidget(self.rgb_channel_curves[2].widget)
         self.gl_temperature_display_ph.addWidget(self.temperature_series.widget)
+
+        self.temperature_series.graph.setPen(width=5)
+        self.fan_curve.graph.setPen(width=3)
+        for curve in self.rgb_channel_curves:
+            curve.graph.setPen(width=3)
 
     def init_spinning_fans(self):
         for idx in range(leviathans_breath.NUM_FANS()):

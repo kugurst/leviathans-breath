@@ -1,12 +1,16 @@
+import constants
 import math
 import numpy as np
 import pyqtgraph as pg
 import sys
-from pyqtgraph.Qt import QtCore, QtGui
+from pyqtgraph.Qt import QtCore, QtGui, QtWidgets
 
 
 class EditableCurve(pg.GraphItem):
     def __init__(self):
+        self.add_new_point_on_double_click = True
+        self.delete_point_on_right_click = True
+
         self.dragPoint = None
         self.drag_offset_x_ = None
         self.drag_offset_y_ = None
@@ -39,8 +43,54 @@ class EditableCurve(pg.GraphItem):
     def updateGraph(self):
         pg.GraphItem.setData(self, **self.data)
 
-    def mousePressEvent(self, ev):
-        super(self.__class__, self).mousePressEvent(ev)
+    def mousePressEvent(self, ev: QtWidgets.QGraphicsSceneMouseEvent):
+        pos = ev.pos()  # type: QtCore.QPointF
+        pts = self.scatter.pointsAt(pos)
+        points = self.data['pos']
+
+        if len(pts) > 0 and (ev.buttons() & QtCore.Qt.RightButton) and len(points) > 2:
+            self.dragPoint = pts[0]
+            ind = pts[0].data()[0]
+            self.data['pos'] = np.delete(points, ind, axis=0)
+            self.setData(**self.data)
+            ev.accept()
+
+            if self.callback:
+                self.callback(ind)
+
+            return
+        else:
+            super(self.__class__, self).mousePressEvent(ev)
+
+    def mouseDoubleClickEvent(self, ev: QtWidgets.QGraphicsSceneMouseEvent):
+        print("double clicked")
+        pos = ev.pos()  # type: QtCore.QPointF
+        pts = self.scatter.pointsAt(pos)
+
+        if len(pts):
+            ev.ignore()
+            return
+        if pos.x() < self.min_x or pos.x() > self.max_x or pos.y() < self.min_y or pos.y() > self.max_y:
+            ev.ignore()
+            return
+
+        rounded_x, rounded_y = quarter_round(pos.x()), quarter_round(pos.y())
+
+        points = self.data['pos']
+        insert_idx = len(points)
+        for idx, point in enumerate(points):
+            if rounded_x < point[0]:
+                insert_idx = idx
+                break
+
+        self.data['pos'] = np.insert(points, insert_idx, [rounded_x, rounded_y], axis=0)
+        self.setData(**self.data)
+        ev.accept()
+
+        if self.callback:
+            self.callback(insert_idx)
+
+        return
 
     def mouseDragEvent(self, ev):
         if ev.button() != QtCore.Qt.LeftButton:
@@ -79,6 +129,14 @@ class EditableCurve(pg.GraphItem):
 
         self.updateGraph()
         ev.accept()
+
+
+class TimeSeriesCurve(EditableCurve):
+    def __init__(self):
+        super(self.__class__, self).__init__()
+
+        self.add_new_point_on_double_click = False
+        self.delete_point_on_right_click = False
 
 
 def search(arr, x):

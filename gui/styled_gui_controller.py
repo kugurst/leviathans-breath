@@ -1,6 +1,7 @@
 import enum
 import os
 
+import constants
 import db_config
 import driver_process
 import editable_curve
@@ -12,8 +13,6 @@ import yaml
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-DB_FILE_NAME = os.path.join(os.path.dirname(os.path.abspath(__file__)), "db.yaml")
-MAX_TEMPERATURE_POINTS = 60
 _MAX_TIME_STEP = 100
 
 
@@ -38,11 +37,11 @@ class StyledGuiController(QtWidgets.QWidget):
         self.gui = gui
         self.db = db_config.DB.build_default()
 
-        if os.path.isfile(DB_FILE_NAME):
+        if os.path.isfile(constants.DB_FILE_NAME):
             try:
-                self.db.load(DB_FILE_NAME)
+                self.db.load(constants.DB_FILE_NAME)
             except yaml.YAMLError:
-                os.unlink(DB_FILE_NAME)
+                os.unlink(constants.DB_FILE_NAME)
 
         self.spinner_timer = QtCore.QTimer(self)
         self.spinner_timer.timeout.connect(self.set_speed_multiplier_)
@@ -101,12 +100,20 @@ class StyledGuiController(QtWidgets.QWidget):
     def populate_status_buttons_(self):
         for idx, pb in enumerate(self.gui.rgb_preview_buttons):
             pb.setText(self.db.led_configs[idx].name)
+            pb.setFixedHeight(pb.height() * 1.75)
         for idx, widget in enumerate(self.gui.fan_widgets):
             widget.name_button.setText(self.db.fan_configs[idx].name)
 
     def populate_curves_(self):
         self.on_cb_fan_curve_selection_currentIndexChanged(self.gui.cb_fan_curve_selection.currentIndex())
         self.on_cb_led_curve_selection_currentIndexChanged(self.gui.cb_led_curve_selection.currentIndex())
+
+        self.gui.temperature_series.widget.getPlotItem().getViewBox().disableAutoRange()
+        self.gui.temperature_series.widget.getPlotItem().getViewBox().setRange(
+            xRange=(0, self.db.gui_config.max_temperature_sample_count),
+            yRange=(self.db.gui_config.min_temperature_display, self.db.gui_config.max_temperature_display))
+
+        # print(self.gui.temperature_series.graph.getViewWidget().setBackgroundBrush())
 
     def connect_signals(self):
         self.gui.cb_fan_curve_selection.currentIndexChanged.connect(self.on_cb_fan_curve_selection_currentIndexChanged)
@@ -155,49 +162,13 @@ class StyledGuiController(QtWidgets.QWidget):
             pb.setStyleSheet(
                 "background-color: rgba({}, {}, {}, 1); color: rgba({}, {}, {}, 1)".format(*brightness_levels,
                                                                                            *text_brightness_levels))
-        # time_step_incr = 1 / self.db.gui_config.led_update_rate * 1000
-        # for idx, pb in enumerate(self.gui.rgb_preview_buttons):
-        #     curves = self.gui.rgb_channel_curves[idx]
-        #     speed_multiplier = self.gui.dsb_speed_multiplier.value()
-        #
-        #     if self.gui.rb_time_controlled.isChecked():
-        #         time_step = self.time_step[idx]
-        #         bounds = editable_curve.search(curves.graph.get_points(), time_step)
-        #         range_ = bounds[1][0] - bounds[0][0]  # hi.x - lo.x
-        #         if range_ == 0:
-        #             ratio = 1
-        #         else:
-        #             ratio = (time_step - bounds[0][0]) / range_
-        #     else:
-        #         temperature = (Dimension)sensor_->read_temperature();
-        #         bounds = curve.search(temperature);
-        #         range =
-        #         std::get<X>(std::get<HI>(bounds)) - std::get<X>(std::get<LO>(bounds));
-        #
-        #         if (range == 0) {
-        #         ratio = 1; // exact match
-        #         } else {
-        #         ratio = (((CalculatorDimension)temperature) -
-        #         (CalculatorDimension)std::get<X>(std::get<LO>(bounds))) /
-        #         (CalculatorDimension)range;
-        #         }
-        #
-        #     print(ratio)
-        #
-        #     pb.setStyleSheet("background-color: rgba(255, 255, 255, 1)")
-        #
-        #     print(self.time_step[idx], time_step_incr, time_step_incr * speed_multiplier)
-        #
-        #     if self.time_step[idx] == _MAX_TIME_STEP:
-        #         self.time_step[idx] = 0
-        #     else:
-        #         self.time_step[idx] = min(_MAX_TIME_STEP, self.time_step[idx] + (time_step_incr * speed_multiplier))
 
     def _update_fan_status(self):
         fan_params = json.loads(driver_process.get_all_fan_parameters())[StyledGuiController.FAN_PARAMS_JSON_KEY]
         fan_rpms = json.loads(driver_process.get_all_fan_rpms())[StyledGuiController.RPM_JSON_KEY]
 
         for idx, rpm in enumerate(fan_rpms):
+            rpm = 0 if rpm is None else rpm
             widget = self.gui.fan_widgets[idx]
             widget.rpm_label.setText("{} RPM".format(round(rpm)))
             if rpm > 0:
@@ -227,16 +198,22 @@ class StyledGuiController(QtWidgets.QWidget):
             indices = []
             readings = []
 
-        if len(points) < MAX_TEMPERATURE_POINTS:
+        if len(points) < constants.MAX_TIME_SERIES_POINTS:
             points.append((len(points), temperature))
-            self.gui.temperature_series.graph.set_points(np.array(points))
+            self.gui.temperature_series.graph.setData(pos=np.array(points), size=1, pxMode=True)
+            # self.gui.temperature_series.graph.set_points(np.array(points))
         else:
             readings = readings[1:].tolist()
             readings.append(temperature)
-            # print(len(readings), len(indices))
-            # print(np.array(list(zip(indices, readings))))
-            # print(np.stack((indices, readings), axis=-1))
             self.gui.temperature_series.graph.set_points(np.stack((indices, readings), axis=-1))
+
+        if len(readings) > 0:
+            min_reading, max_reading = round_to_ten(np.min(readings)), round_to_ten(
+                np.max(readings) + self.db.gui_config.temperature_y_axis_buffer)
+            view_range = self.gui.temperature_series.widget.getPlotItem().getViewBox().viewRange()
+            # print(view_range)
+
+            # if min_reading <
 
     @QtCore.pyqtSlot()
     def on_pb_led_options_delete_clicked(self):
@@ -247,7 +224,7 @@ class StyledGuiController(QtWidgets.QWidget):
         self.gui.cb_led_options_preset.removeItem(self.gui.cb_led_options_preset.currentIndex())
 
         self.db.delete_led_preset(preset_name)
-        self.db.save(DB_FILE_NAME)
+        self.db.save(constants.DB_FILE_NAME)
 
     @QtCore.pyqtSlot()
     def on_pb_fan_options_delete_clicked(self):
@@ -258,7 +235,7 @@ class StyledGuiController(QtWidgets.QWidget):
         self.gui.cb_fan_options_preset.removeItem(self.gui.cb_fan_options_preset.currentIndex())
 
         self.db.delete_fan_preset(preset_name)
-        self.db.save(DB_FILE_NAME)
+        self.db.save(constants.DB_FILE_NAME)
 
     @QtCore.pyqtSlot()
     def on_pb_led_options_load_clicked(self):
@@ -305,7 +282,7 @@ class StyledGuiController(QtWidgets.QWidget):
         preset.name = preset_name
 
         self.db.add_led_preset(preset)
-        self.db.save(DB_FILE_NAME)
+        self.db.save(constants.DB_FILE_NAME)
 
     @QtCore.pyqtSlot()
     def on_pb_fan_options_save_clicked(self):
@@ -320,7 +297,7 @@ class StyledGuiController(QtWidgets.QWidget):
         preset.name = preset_name
 
         self.db.add_fan_preset(preset)
-        self.db.save(DB_FILE_NAME)
+        self.db.save(constants.DB_FILE_NAME)
 
     def sync_led_curves(self):
         for idx, cb in enumerate([self.gui.cb_r_channel_sync, self.gui.cb_g_channel_sync, self.gui.cb_b_channel_sync]):
@@ -344,7 +321,7 @@ class StyledGuiController(QtWidgets.QWidget):
     def on_cb_rgb_channel_sync_currentIndexChanged(self, cb_index, index):
         led_index = self.gui.cb_fan_curve_selection.currentIndex()
         self.db.led_configs[led_index].channel_sync[cb_index] = index - 1
-        self.db.save(DB_FILE_NAME)
+        self.db.save(constants.DB_FILE_NAME)
         self.sync_led_curves()
 
     @QtCore.pyqtSlot(bool)
@@ -419,7 +396,7 @@ class StyledGuiController(QtWidgets.QWidget):
     def on_fan_curve_dataChangeEvent(self, data_index=-1):
         points = self.gui.fan_curve.graph.get_points()
         curve_dict = {StyledGuiController.POINTS_JSON_KEY: points.tolist()}
-        driver_process.send_fan_curve(self.gui.cb_fan_curve_selection.currentIndex(), json.dumps(curve_dict))
+        # driver_process.send_fan_curve(self.gui.cb_fan_curve_selection.currentIndex(), json.dumps(curve_dict))
 
     @QtCore.pyqtSlot(int)
     def on_rgb_channel_curves_dataChangeEvent(self, data_index=-1, syncing=True):
@@ -465,3 +442,7 @@ class StyledGuiController(QtWidgets.QWidget):
             cb.blockSignals(True)
             cb.setCurrentIndex(self.db.led_configs[index].channel_sync[idx] + 1)
             cb.blockSignals(False)
+
+
+def round_to_ten(value):
+    return int(value / 10) * 10

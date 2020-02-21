@@ -59,6 +59,10 @@ class GuiConfig(SerializableClass):
         self.temp_update_rate = 60
         self.fan_update_rate = 2
         self.led_update_rate = 60
+        self.min_temperature_display = 10
+        self.max_temperature_display = 50
+        self.max_temperature_sample_count = 60
+        self.temperature_y_axis_buffer = 10
 
 
 class DB(object):
