@@ -44,6 +44,10 @@ class EditableCurve(pg.GraphItem):
         pg.GraphItem.setData(self, **self.data)
 
     def mousePressEvent(self, ev: QtWidgets.QGraphicsSceneMouseEvent):
+        if not self.delete_point_on_right_click:
+            super(EditableCurve, self).mousePressEvent(ev)
+            return
+
         pos = ev.pos()  # type: QtCore.QPointF
         pts = self.scatter.pointsAt(pos)
         points = self.data['pos']
@@ -63,7 +67,11 @@ class EditableCurve(pg.GraphItem):
             super(self.__class__, self).mousePressEvent(ev)
 
     def mouseDoubleClickEvent(self, ev: QtWidgets.QGraphicsSceneMouseEvent):
-        print("double clicked")
+        if not self.add_new_point_on_double_click:
+            print("ignoring double click")
+            ev.ignore()
+            return
+
         pos = ev.pos()  # type: QtCore.QPointF
         pts = self.scatter.pointsAt(pos)
 
