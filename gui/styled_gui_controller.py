@@ -156,13 +156,22 @@ class StyledGuiController(QtWidgets.QWidget):
         self.gui.pb_fan_options_delete.clicked.connect(self.on_pb_fan_options_delete_clicked)
         self.gui.pb_led_options_delete.clicked.connect(self.on_pb_led_options_delete_clicked)
 
-        self.gui.fan_curve.graph.data_drag_callback = lambda ind: self.on_data_drag(self.gui.fan_curve, ind)
-        self.gui.rgb_channel_curves[0].graph.data_drag_callback = lambda ind: self.on_data_drag(
-            self.gui.rgb_channel_curves[0], ind)
-        self.gui.rgb_channel_curves[1].graph.data_drag_callback = lambda ind: self.on_data_drag(
-            self.gui.rgb_channel_curves[1], ind)
-        self.gui.rgb_channel_curves[2].graph.data_drag_callback = lambda ind: self.on_data_drag(
-            self.gui.rgb_channel_curves[2], ind)
+        for callback_name in ["data_drag_callback", "hover_point_callback"]:
+            setattr(self.gui.fan_curve.graph, callback_name, lambda ind: self.on_data_drag(self.gui.fan_curve, ind))
+            setattr(self.gui.rgb_channel_curves[0].graph, callback_name, lambda ind: self.on_data_drag(
+                self.gui.rgb_channel_curves[0], ind))
+            setattr(self.gui.rgb_channel_curves[1].graph, callback_name, lambda ind: self.on_data_drag(
+                self.gui.rgb_channel_curves[1], ind))
+            setattr(self.gui.rgb_channel_curves[2].graph, callback_name, lambda ind: self.on_data_drag(
+                self.gui.rgb_channel_curves[2], ind))
+
+        # self.gui.fan_curve.graph.data_drag_callback = lambda ind: self.on_data_drag(self.gui.fan_curve, ind)
+        # self.gui.rgb_channel_curves[0].graph.data_drag_callback = lambda ind: self.on_data_drag(
+        #     self.gui.rgb_channel_curves[0], ind)
+        # self.gui.rgb_channel_curves[1].graph.data_drag_callback = lambda ind: self.on_data_drag(
+        #     self.gui.rgb_channel_curves[1], ind)
+        # self.gui.rgb_channel_curves[2].graph.data_drag_callback = lambda ind: self.on_data_drag(
+        #     self.gui.rgb_channel_curves[2], ind)
 
     def _update_led_display(self):
         led_params = json.loads(driver_process.get_all_led_parameters())[StyledGuiController.LED_PARAMS_JSON_KEY]

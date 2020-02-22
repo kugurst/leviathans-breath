@@ -24,6 +24,7 @@ class EditableCurve(pg.GraphItem):
 
         self.data_update_callback = None
         self.data_drag_callback = None
+        self.hover_point_callback = None
 
         pg.GraphItem.__init__(self)
 
@@ -48,6 +49,14 @@ class EditableCurve(pg.GraphItem):
 
     def updateGraph(self):
         pg.GraphItem.setData(self, **self.data)
+
+    def mouseMoveEvent(self, ev):
+        pos = self.getViewBox().mapSceneToView(ev)
+        pts = self.scatter.pointsAt(pos)
+
+        if pts and self.hover_point_callback:
+            ind = pts[0].data()[0]
+            self.hover_point_callback(ind)
 
     def mousePressEvent(self, ev: QtWidgets.QGraphicsSceneMouseEvent):
         if not self.delete_point_on_right_click:
@@ -229,6 +238,8 @@ class EditableCurveCollection(object):
 
         self.view_x = [0, 100]
         self.view_y = [0, 100]
+
+        self.widget.sceneObj.sigMouseMoved.connect(self.graph.mouseMoveEvent)
 
     def set_view_range(self, x_range=None, y_range=None):
         new_x_range, new_y_range = None, None
