@@ -65,6 +65,8 @@ class GuiConfig(SerializableClass):
         self.temperature_y_axis_buffer = 10
         self.curve_dot_size = 15
         self.match_ends_of_led_curve = True
+        self.max_fan_curve_temperature = 50
+        self.min_fan_curve_temperature = 10
 
 
 class DB(object):

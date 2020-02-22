@@ -122,9 +122,9 @@ bool FileManager::load_config() {
 void FileManager::load_defaults() {
   for (auto &fan_control : Config::fan_controls) {
     auto &curve = fan_control.get_curve();
-    curve.get_points()[0] = std::move(std::make_tuple(0.0f, 0.0f));
-    curve.get_points()[1] = std::move(std::make_tuple(20.0f, 40.0f));
-    curve.get_points()[2] = std::move(std::make_tuple(30.0f, 80.0f));
+    curve.get_points()[0] = std::move(std::make_tuple(20.0f, 40.0f));
+    curve.get_points()[1] = std::move(std::make_tuple(26.6f, 60.0f));
+    curve.get_points()[2] = std::move(std::make_tuple(33.3f, 80.0f));
     curve.get_points()[3] = std::move(std::make_tuple(40.0f, 100.0f));
     curve.set_valid_points(4);
   }

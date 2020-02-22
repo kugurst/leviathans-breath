@@ -118,6 +118,13 @@ class StyledGuiController(QtWidgets.QWidget):
             curve.widget.getPlotItem().getViewBox().disableAutoRange()
             curve.widget.getPlotItem().getViewBox().setRange(xRange=(0, 100), yRange=(0, 100))
 
+        self.gui.fan_curve.graph.min_x = self.db.gui_config.min_fan_curve_temperature
+        self.gui.fan_curve.graph.max_x = self.db.gui_config.max_fan_curve_temperature
+        self.gui.fan_curve.widget.getPlotItem().getViewBox().disableAutoRange()
+        self.gui.fan_curve.widget.getPlotItem().getViewBox().setRange(
+            xRange=(self.db.gui_config.min_fan_curve_temperature, self.db.gui_config.max_fan_curve_temperature),
+            yRange=(0, 100))
+
         # print(self.gui.temperature_series.graph.getViewWidget().setBackgroundBrush())
 
     def connect_signals(self):
