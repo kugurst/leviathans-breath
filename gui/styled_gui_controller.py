@@ -109,21 +109,16 @@ class StyledGuiController(QtWidgets.QWidget):
         self.on_cb_fan_curve_selection_currentIndexChanged(self.gui.cb_fan_curve_selection.currentIndex())
         self.on_cb_led_curve_selection_currentIndexChanged(self.gui.cb_led_curve_selection.currentIndex())
 
-        self.gui.temperature_series.widget.getPlotItem().getViewBox().disableAutoRange()
-        self.gui.temperature_series.widget.getPlotItem().getViewBox().setRange(
-            xRange=(0, self.db.gui_config.max_temperature_sample_count),
-            yRange=(self.db.gui_config.min_temperature_display, self.db.gui_config.max_temperature_display))
+        self.gui.temperature_series.set_view_range((0, self.db.gui_config.max_temperature_sample_count), (
+            self.db.gui_config.min_temperature_display, self.db.gui_config.max_temperature_display))
 
         for curve in self.gui.rgb_channel_curves:
-            curve.widget.getPlotItem().getViewBox().disableAutoRange()
-            curve.widget.getPlotItem().getViewBox().setRange(xRange=(0, 100), yRange=(0, 100))
+            curve.set_view_range((0, 100), (0, 100))
 
         self.gui.fan_curve.graph.min_x = self.db.gui_config.min_fan_curve_temperature
         self.gui.fan_curve.graph.max_x = self.db.gui_config.max_fan_curve_temperature
-        self.gui.fan_curve.widget.getPlotItem().getViewBox().disableAutoRange()
-        self.gui.fan_curve.widget.getPlotItem().getViewBox().setRange(
-            xRange=(self.db.gui_config.min_fan_curve_temperature, self.db.gui_config.max_fan_curve_temperature),
-            yRange=(0, 100))
+        self.gui.fan_curve.set_view_range(
+            (self.db.gui_config.min_fan_curve_temperature, self.db.gui_config.max_fan_curve_temperature), (0, 100))
 
         # print(self.gui.temperature_series.graph.getViewWidget().setBackgroundBrush())
 
@@ -221,10 +216,8 @@ class StyledGuiController(QtWidgets.QWidget):
         if len(readings) > 0:
             min_reading, max_reading = round_to_ten(np.min(readings)), round_to_ten(
                 np.max(readings) + self.db.gui_config.temperature_y_axis_buffer)
-            view_range = self.gui.temperature_series.widget.getPlotItem().getViewBox().viewRange()
-            # print(view_range)
 
-            # if min_reading <
+            self.gui.temperature_series.set_view_range(y_range=(min_reading, max_reading))
 
     @QtCore.pyqtSlot()
     def on_pb_led_options_delete_clicked(self):

@@ -223,6 +223,22 @@ class EditableCurveCollection(object):
         self.widget = widget
         self.graph = graph
 
+        self.view_x = [0, 100]
+        self.view_y = [0, 100]
+
+    def set_view_range(self, x_range=None, y_range=None):
+        new_x_range, new_y_range = None, None
+        if x_range and len(y_range) == 2:
+            if self.view_x != x_range:
+                new_x_range = x_range
+        if y_range and len(y_range) == 2:
+            if self.view_y != y_range:
+                new_y_range = y_range
+
+        if new_x_range or new_y_range:
+            self.widget.getPlotItem().getViewBox().disableAutoRange()
+            self.widget.getPlotItem().getViewBox().setRange(xRange=new_x_range, yRange=new_y_range)
+
 
 def main():
     pg.setConfigOptions(antialias=True)

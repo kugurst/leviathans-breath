@@ -56,7 +56,7 @@ class LEDCurvePreset(SerializableClass):
 
 class GuiConfig(SerializableClass):
     def __init__(self):
-        self.temp_update_rate = 60
+        self.temp_update_rate = 5
         self.fan_update_rate = 2
         self.led_update_rate = 60
         self.min_temperature_display = 10
@@ -175,8 +175,9 @@ class DB(object):
                 [DB.FAN_CONFIGS_KEY, DB.LED_CONFIGS_KEY, DB.TEMPERATURE_CONFIGS_KEY],
                 [self.fan_configs, self.led_configs, self.temperature_configs],
                 [FanConfig, LEDConfig, TemperatureConfig]):
-            for config in sorted(store[configs_key], key=lambda elem: elem['index']):
-                configs.append(config_class.from_dict(config))
+            if configs_key in store:
+                for config in sorted(store[configs_key], key=lambda elem: elem['index']):
+                    configs.append(config_class.from_dict(config))
 
         if DB.FAN_PRESET_CONFIGS_KEY in store:
             for preset in store[DB.FAN_PRESET_CONFIGS_KEY]:
@@ -185,7 +186,8 @@ class DB(object):
             for preset in store[DB.LED_PRESET_CONFIGS_KEY]:
                 self.led_presets.append(LEDCurvePreset.from_dict(preset))
 
-        self.gui_config = GuiConfig.from_dict(store[DB.GUI_CONFIG_KEY])
+        if DB.GUI_CONFIG_KEY in store:
+            self.gui_config = GuiConfig.from_dict(store[DB.GUI_CONFIG_KEY])
 
         self.init_maps_()
 
