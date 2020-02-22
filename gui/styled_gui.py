@@ -35,11 +35,16 @@ class StyledGui(gui.Ui_mw_main, QtWidgets.QMainWindow):
         self.fan_curve = None  # type: editable_curve.EditableCurveCollection
         self.temperature_series = None  # type: editable_curve.EditableCurveCollection
         self.parent = None
+        self.rgb_tabs = []  # type: list[QtWidgets.QWidget]
+        self.rgb_sync_combo_boxes = []  # type: list[QtWidgets.QComboBox]
 
         self.gb_anims = dict()  # type: dict[QtWidgets.QGroupBox, GroupBoxAnimations]
 
     def setupUi(self):
         super(self.__class__, self).setupUi(self)
+
+        self.rgb_tabs = [self.tw_led_channel_t_r, self.tw_led_channel_t_g, self.tw_led_channel_t_b]
+        self.rgb_sync_combo_boxes = [self.cb_r_channel_sync, self.cb_g_channel_sync, self.cb_b_channel_sync]
 
         self.init_curves()
         self.init_spinning_fans()
@@ -118,7 +123,8 @@ class StyledGui(gui.Ui_mw_main, QtWidgets.QMainWindow):
     def init_curves(self):
         self.fan_curve = editable_curve.EditableCurveCollection(*self.make_curve())
         for _ in range(leviathans_breath.NUM_LED_CHANNELS()):
-            self.rgb_channel_curves.append(editable_curve.EditableCurveCollection(*self.make_curve()))
+            self.rgb_channel_curves.append(
+                editable_curve.EditableCurveCollection(*self.make_curve(graph_type=editable_curve.LEDCurveEditor)))
         self.temperature_series = editable_curve.EditableCurveCollection(
             *self.make_curve(graph_type=editable_curve.TimeSeriesCurve))
 

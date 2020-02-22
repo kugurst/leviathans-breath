@@ -67,6 +67,7 @@ class StyledGuiController(QtWidgets.QWidget):
         self.populate_combo_boxes_()
         self.populate_status_buttons_()
         self.populate_curves_()
+        self.update_editable_led_curves_()
 
     def populate_combo_boxes_(self):
         self.gui.cb_temperature_display_selection.clear()
@@ -85,7 +86,7 @@ class StyledGuiController(QtWidgets.QWidget):
         self.gui.cb_led_curve_temperature_source_selection.addItems(
             [temp_config.name for temp_config in self.db.temperature_configs])
 
-        for idx, cb in enumerate([self.gui.cb_r_channel_sync, self.gui.cb_g_channel_sync, self.gui.cb_b_channel_sync]):
+        for idx, cb in enumerate(self.gui.rgb_sync_combo_boxes):
             cb.addItems(["SELF", "R Channel", "G Channel", "B Channel"])
 
             view = cb.view()  # type: QtWidgets.QListView
@@ -113,15 +114,19 @@ class StyledGuiController(QtWidgets.QWidget):
             xRange=(0, self.db.gui_config.max_temperature_sample_count),
             yRange=(self.db.gui_config.min_temperature_display, self.db.gui_config.max_temperature_display))
 
+        for curve in self.gui.rgb_channel_curves:
+            curve.widget.getPlotItem().getViewBox().disableAutoRange()
+            curve.widget.getPlotItem().getViewBox().setRange(xRange=(0, 100), yRange=(0, 100))
+
         # print(self.gui.temperature_series.graph.getViewWidget().setBackgroundBrush())
 
     def connect_signals(self):
         self.gui.cb_fan_curve_selection.currentIndexChanged.connect(self.on_cb_fan_curve_selection_currentIndexChanged)
         self.gui.cb_led_curve_selection.currentIndexChanged.connect(self.on_cb_led_curve_selection_currentIndexChanged)
-        self.gui.fan_curve.graph.callback = self.on_fan_curve_dataChangeEvent
+        self.gui.fan_curve.graph.data_update_callback = self.on_fan_curve_dataChangeEvent
         for curve in self.gui.rgb_channel_curves:
-            curve.graph.callback = lambda data_index: self.on_rgb_channel_curves_dataChangeEvent(data_index,
-                                                                                                 syncing=False)
+            curve.graph.data_update_callback = lambda data_index: self.on_rgb_channel_curves_dataChangeEvent(
+                data_index, syncing=False)
         self.gui.cb_pwm_controlled.stateChanged.connect(self.on_cb_pwm_controlled_stateChanged)
 
         self.gui.cb_fan_curve_temperature_source_selection.currentIndexChanged.connect(
@@ -201,7 +206,6 @@ class StyledGuiController(QtWidgets.QWidget):
         if len(points) < constants.MAX_TIME_SERIES_POINTS:
             points.append((len(points), temperature))
             self.gui.temperature_series.graph.setData(pos=np.array(points), size=1, pxMode=True)
-            # self.gui.temperature_series.graph.set_points(np.array(points))
         else:
             readings = readings[1:].tolist()
             readings.append(temperature)
@@ -252,8 +256,8 @@ class StyledGuiController(QtWidgets.QWidget):
                 cb.setCurrentIndex(sync_target + 1)
             cb.blockSignals(False)
 
-        for idx, editable_curve in enumerate(self.gui.rgb_channel_curves):
-            editable_curve.graph.set_points(np.array(preset.curves[idx]))
+        for idx, curve in enumerate(self.gui.rgb_channel_curves):
+            curve.graph.set_points(np.array(preset.curves[idx]))
 
         self.on_rgb_channel_curves_dataChangeEvent(syncing=False)
 
@@ -317,12 +321,24 @@ class StyledGuiController(QtWidgets.QWidget):
         curves_dict = {StyledGuiController.POINTS_JSON_KEY: points}
         driver_process.send_led_curve(self.gui.cb_led_curve_selection.currentIndex(), json.dumps(curves_dict))
 
+    def update_editable_led_curves_(self):
+        for tab_idx in range(len(self.gui.rgb_tabs)):
+            cb_sync_idx = self.gui.rgb_sync_combo_boxes[tab_idx].currentIndex()
+            if cb_sync_idx != 0:
+                self.gui.rgb_tabs[tab_idx].setEnabled(False)
+            else:
+                self.gui.rgb_tabs[tab_idx].setEnabled(True)
+
     @QtCore.pyqtSlot(int, int)
     def on_cb_rgb_channel_sync_currentIndexChanged(self, cb_index, index):
         led_index = self.gui.cb_fan_curve_selection.currentIndex()
         self.db.led_configs[led_index].channel_sync[cb_index] = index - 1
-        self.db.save(constants.DB_FILE_NAME)
+
+        self.update_editable_led_curves_()
+
         self.sync_led_curves()
+
+        self.db.save(constants.DB_FILE_NAME)
 
     @QtCore.pyqtSlot(bool)
     def on_rb_time_controlled_toggled(self, checked):
@@ -396,7 +412,7 @@ class StyledGuiController(QtWidgets.QWidget):
     def on_fan_curve_dataChangeEvent(self, data_index=-1):
         points = self.gui.fan_curve.graph.get_points()
         curve_dict = {StyledGuiController.POINTS_JSON_KEY: points.tolist()}
-        # driver_process.send_fan_curve(self.gui.cb_fan_curve_selection.currentIndex(), json.dumps(curve_dict))
+        driver_process.send_fan_curve(self.gui.cb_fan_curve_selection.currentIndex(), json.dumps(curve_dict))
 
     @QtCore.pyqtSlot(int)
     def on_rgb_channel_curves_dataChangeEvent(self, data_index=-1, syncing=True):
@@ -410,7 +426,7 @@ class StyledGuiController(QtWidgets.QWidget):
         curve_json = driver_process.get_fan_curve(index)
         curve = json.loads(curve_json)[StyledGuiController.POINTS_JSON_KEY]
         n_curve = np.array(curve)
-        self.gui.fan_curve.graph.setData(pos=n_curve, size=10, pxMode=True)
+        self.gui.fan_curve.graph.setData(pos=n_curve, size=self.db.gui_config.curve_dot_size, pxMode=True)
 
         fan_params = json.loads(driver_process.get_all_fan_parameters())[StyledGuiController.FAN_PARAMS_JSON_KEY]
         fan_param = next(param for param in fan_params if param["channel"] == index)
@@ -424,7 +440,7 @@ class StyledGuiController(QtWidgets.QWidget):
         curves = json.loads(curves_json)[StyledGuiController.POINTS_JSON_KEY]
         curves_list = [np.array(curves[chan]) for chan in StyledGuiController.RGB_CHAN_JSON_KEYS]
         for curve, gui_curve in zip(curves_list, self.gui.rgb_channel_curves):
-            gui_curve.graph.setData(pos=curve, size=10, pxMode=True)
+            gui_curve.graph.setData(pos=curve, size=self.db.gui_config.curve_dot_size, pxMode=True)
 
         led_params = json.loads(driver_process.get_all_led_parameters())[StyledGuiController.LED_PARAMS_JSON_KEY]
         led_param = next(param for param in led_params if param["channel"] == index)

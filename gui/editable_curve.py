@@ -10,6 +10,8 @@ class EditableCurve(pg.GraphItem):
     def __init__(self):
         self.add_new_point_on_double_click = True
         self.delete_point_on_right_click = True
+        self.ensure_monotonic_in_y = True
+        self.ensure_first_and_last_y_same = False
 
         self.dragPoint = None
         self.drag_offset_x_ = None
@@ -20,7 +22,7 @@ class EditableCurve(pg.GraphItem):
         self.min_y = 0
         self.max_y = 100
 
-        self.callback = None
+        self.data_update_callback = None
 
         pg.GraphItem.__init__(self)
 
@@ -37,7 +39,10 @@ class EditableCurve(pg.GraphItem):
         return self.data['pos']
 
     def set_points(self, points: np.ndarray):
+        old_points = self.data['pos']
         self.data['pos'] = points
+        if len(points) != len(old_points):
+            self.setData(**self.data)
         self.updateGraph()
 
     def updateGraph(self):
@@ -59,16 +64,15 @@ class EditableCurve(pg.GraphItem):
             self.setData(**self.data)
             ev.accept()
 
-            if self.callback:
-                self.callback(ind)
+            if self.data_update_callback:
+                self.data_update_callback(ind)
 
             return
         else:
-            super(self.__class__, self).mousePressEvent(ev)
+            super(EditableCurve, self).mousePressEvent(ev)
 
     def mouseDoubleClickEvent(self, ev: QtWidgets.QGraphicsSceneMouseEvent):
         if not self.add_new_point_on_double_click:
-            print("ignoring double click")
             ev.ignore()
             return
 
@@ -92,11 +96,14 @@ class EditableCurve(pg.GraphItem):
                 break
 
         self.data['pos'] = np.insert(points, insert_idx, [rounded_x, rounded_y], axis=0)
+        self.ensure_monotonic_(insert_idx)
+        if self.ensure_first_and_last_y_same and (insert_idx == len(self.data['pos']) or insert_idx == 0):
+            self.align_first_and_last_y_(insert_idx)
         self.setData(**self.data)
         ev.accept()
 
-        if self.callback:
-            self.callback(insert_idx)
+        if self.data_update_callback:
+            self.data_update_callback(insert_idx)
 
         return
 
@@ -116,8 +123,8 @@ class EditableCurve(pg.GraphItem):
             self.drag_offset_x_ = self.data['pos'][ind][0] - pos[0]
             self.drag_offset_y_ = self.data['pos'][ind][1] - pos[1]
         elif ev.isFinish():
-            if self.callback:
-                self.callback(self.dragPoint.data()[0])
+            if self.data_update_callback:
+                self.data_update_callback(self.dragPoint.data()[0])
             self.dragPoint = None
             return
         else:
@@ -132,11 +139,41 @@ class EditableCurve(pg.GraphItem):
         self.data['pos'][ind][0] = quarter_round(min(self.max_x, max(self.min_x, new_x)))
         self.data['pos'][ind][1] = quarter_round(min(self.max_y, max(self.min_y, new_y)))
 
-        # print("x:", self.data['pos'][ind][0])
-        # print("y:", self.data['pos'][ind][1])
+        self.ensure_monotonic_(ind)
+        if self.ensure_first_and_last_y_same and (ind == len(self.data['pos']) - 1 or ind == 0):
+            self.align_first_and_last_y_(ind)
 
         self.updateGraph()
         ev.accept()
+
+    def align_first_and_last_y_(self, ind):
+        points = self.data['pos']
+        if ind == 0:
+            points[-1][1] = points[0][1]
+        elif ind == len(points) - 1:
+            points[0][1] = points[-1][1]
+
+    def ensure_monotonic_(self, modified_pos):
+        points = self.data['pos']
+        modified_point = points[modified_pos]
+
+        # Fix the points less than
+        for idx in range(0, modified_pos):
+            point = points[idx]
+            if point[0] > modified_point[0]:
+                point[0] = modified_point[0]
+            if self.ensure_monotonic_in_y:
+                if point[1] > modified_point[1]:
+                    point[1] = modified_point[1]
+
+        # Fix the points greater than
+        for idx in range(modified_pos + 1, len(points)):
+            point = points[idx]
+            if point[0] < modified_point[0]:
+                point[0] = modified_point[0]
+            if self.ensure_monotonic_in_y:
+                if point[1] < modified_point[1]:
+                    point[1] = modified_point[1]
 
 
 class TimeSeriesCurve(EditableCurve):
@@ -145,6 +182,14 @@ class TimeSeriesCurve(EditableCurve):
 
         self.add_new_point_on_double_click = False
         self.delete_point_on_right_click = False
+
+
+class LEDCurveEditor(EditableCurve):
+    def __init__(self):
+        super(self.__class__, self).__init__()
+
+        self.ensure_monotonic_in_y = False
+        self.ensure_first_and_last_y_same = True
 
 
 def search(arr, x):
