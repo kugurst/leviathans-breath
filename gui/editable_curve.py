@@ -23,6 +23,7 @@ class EditableCurve(pg.GraphItem):
         self.max_y = 100
 
         self.data_update_callback = None
+        self.data_drag_callback = None
 
         pg.GraphItem.__init__(self)
 
@@ -145,6 +146,9 @@ class EditableCurve(pg.GraphItem):
 
         self.updateGraph()
         ev.accept()
+
+        if self.data_drag_callback:
+            self.data_drag_callback(ind)
 
     def align_first_and_last_y_(self, ind):
         points = self.data['pos']

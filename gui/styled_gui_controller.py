@@ -156,6 +156,14 @@ class StyledGuiController(QtWidgets.QWidget):
         self.gui.pb_fan_options_delete.clicked.connect(self.on_pb_fan_options_delete_clicked)
         self.gui.pb_led_options_delete.clicked.connect(self.on_pb_led_options_delete_clicked)
 
+        self.gui.fan_curve.graph.data_drag_callback = lambda ind: self.on_data_drag(self.gui.fan_curve, ind)
+        self.gui.rgb_channel_curves[0].graph.data_drag_callback = lambda ind: self.on_data_drag(
+            self.gui.rgb_channel_curves[0], ind)
+        self.gui.rgb_channel_curves[1].graph.data_drag_callback = lambda ind: self.on_data_drag(
+            self.gui.rgb_channel_curves[1], ind)
+        self.gui.rgb_channel_curves[2].graph.data_drag_callback = lambda ind: self.on_data_drag(
+            self.gui.rgb_channel_curves[2], ind)
+
     def _update_led_display(self):
         led_params = json.loads(driver_process.get_all_led_parameters())[StyledGuiController.LED_PARAMS_JSON_KEY]
         for idx in range(leviathans_breath.NUM_LEDS()):
@@ -359,6 +367,10 @@ class StyledGuiController(QtWidgets.QWidget):
     def on_dsb_speed_multiplier_valueChanged(self, value):
         self.spinner_timer.stop()
         self.spinner_timer.start(300)
+
+    def on_data_drag(self, curve, ind):
+        point = curve.graph.get_points()[ind]
+        self.gui.statusbar.showMessage("Point: [{}, {}]".format(*point), 1000)
 
     def set_speed_multiplier_(self):
         speed_multiplier = self.gui.dsb_speed_multiplier.value()
