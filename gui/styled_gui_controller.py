@@ -165,13 +165,65 @@ class StyledGuiController(QtWidgets.QWidget):
             setattr(self.gui.rgb_channel_curves[2].graph, callback_name, lambda ind: self.on_data_drag(
                 self.gui.rgb_channel_curves[2], ind))
 
-        # self.gui.fan_curve.graph.data_drag_callback = lambda ind: self.on_data_drag(self.gui.fan_curve, ind)
-        # self.gui.rgb_channel_curves[0].graph.data_drag_callback = lambda ind: self.on_data_drag(
-        #     self.gui.rgb_channel_curves[0], ind)
-        # self.gui.rgb_channel_curves[1].graph.data_drag_callback = lambda ind: self.on_data_drag(
-        #     self.gui.rgb_channel_curves[1], ind)
-        # self.gui.rgb_channel_curves[2].graph.data_drag_callback = lambda ind: self.on_data_drag(
-        #     self.gui.rgb_channel_curves[2], ind)
+        self.gui.cb_temperature_display_selection.lineEdit().editingFinished.connect(
+            lambda: self.on_cb_temperature_display_selection_editingFinished(self.gui.cb_temperature_display_selection))
+        # self.gui.cb_fan_curve_temperature_source_selection.lineEdit().editingFinished.connect(
+        #     lambda: self.on_cb_temperature_display_selection_editingFinished(
+        #         self.gui.cb_fan_curve_temperature_source_selection))
+        # self.gui.cb_led_curve_temperature_source_selection.lineEdit().editingFinished.connect(
+        #     lambda: self.on_cb_temperature_display_selection_editingFinished(
+        #         self.gui.cb_led_curve_temperature_source_selection))
+
+        self.gui.cb_fan_curve_selection.lineEdit().editingFinished.connect(
+            self.on_cb_fan_curve_selection_editingFinished)
+        self.gui.cb_led_curve_selection.lineEdit().editingFinished.connect(
+            self.on_cb_led_curve_selection_editingFinished)
+
+    @QtCore.pyqtSlot(QtWidgets.QComboBox)
+    def on_cb_temperature_display_selection_editingFinished(self, triggering_cb):
+        new_sensor_name = triggering_cb.currentText()
+        existing_index = triggering_cb.findText(new_sensor_name)
+        if existing_index >= 0:
+            return
+
+        edited_index = triggering_cb.currentIndex()
+        triggering_cb.setItemText(edited_index, new_sensor_name)
+
+        for cb in [self.gui.cb_temperature_display_selection, self.gui.cb_fan_curve_temperature_source_selection, self.gui.cb_led_curve_temperature_source_selection]:
+            if cb is triggering_cb:
+                continue
+            cb.setItemText(edited_index, new_sensor_name)
+
+        self.db.temperature_configs[edited_index].name = new_sensor_name
+        self.db.save(constants.DB_FILE_NAME)
+
+    @QtCore.pyqtSlot()
+    def on_cb_fan_curve_selection_editingFinished(self):
+        new_fan_name = self.gui.cb_fan_curve_selection.currentText()
+        existing_index = self.gui.cb_fan_curve_selection.findText(new_fan_name)
+        if existing_index >= 0:
+            return
+
+        edited_index = self.gui.cb_fan_curve_selection.currentIndex()
+        self.gui.cb_fan_curve_selection.setItemText(edited_index, new_fan_name)
+        self.gui.fan_widgets[edited_index].name_button.setText(new_fan_name)
+
+        self.db.fan_configs[edited_index].name = new_fan_name
+        self.db.save(constants.DB_FILE_NAME)
+
+    @QtCore.pyqtSlot()
+    def on_cb_led_curve_selection_editingFinished(self):
+        new_led_name = self.gui.cb_led_curve_selection.currentText()
+        existing_index = self.gui.cb_led_curve_selection.findText(new_led_name)
+        if existing_index >= 0:
+            return
+
+        edited_index = self.gui.cb_led_curve_selection.currentIndex()
+        self.gui.cb_led_curve_selection.setItemText(edited_index, new_led_name)
+        self.gui.rgb_preview_buttons[edited_index].setText(new_led_name)
+
+        self.db.led_configs[edited_index].name = new_led_name
+        self.db.save(constants.DB_FILE_NAME)
 
     def _update_led_display(self):
         led_params = json.loads(driver_process.get_all_led_parameters())[StyledGuiController.LED_PARAMS_JSON_KEY]
@@ -231,8 +283,14 @@ class StyledGuiController(QtWidgets.QWidget):
             self.gui.temperature_series.graph.set_points(np.stack((indices, readings), axis=-1))
 
         if len(readings) > 0:
-            min_reading, max_reading = round_to_ten(np.min(readings)), round_to_ten(
-                np.max(readings) + self.db.gui_config.temperature_y_axis_buffer)
+            min_reading_unrounded = np.min(readings)
+            max_reading_unrounded = np.max(readings)
+            if min_reading_unrounded < 0:
+                min_reading_unrounded -= self.db.gui_config.temperature_y_axis_buffer
+            if max_reading_unrounded > 0:
+                max_reading_unrounded += self.db.gui_config.temperature_y_axis_buffer
+
+            min_reading, max_reading = round_to_ten(min_reading_unrounded), round_to_ten(max_reading_unrounded)
 
             self.gui.temperature_series.set_view_range(y_range=(min_reading, max_reading))
 

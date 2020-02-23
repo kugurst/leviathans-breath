@@ -32,7 +32,7 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>0</y>
+          <y>-302</y>
           <width>681</width>
           <height>859</height>
          </rect>
@@ -185,7 +185,7 @@
                            </sizepolicy>
                           </property>
                           <property name="editable">
-                           <bool>true</bool>
+                           <bool>false</bool>
                           </property>
                           <property name="insertPolicy">
                            <enum>QComboBox::NoInsert</enum>
@@ -551,7 +551,7 @@
                            </sizepolicy>
                           </property>
                           <property name="editable">
-                           <bool>true</bool>
+                           <bool>false</bool>
                           </property>
                           <property name="insertPolicy">
                            <enum>QComboBox::NoInsert</enum>
