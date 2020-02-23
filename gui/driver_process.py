@@ -2,7 +2,7 @@ import multiprocessing
 import os
 import queue
 
-STOP_TIMEOUT = 0.2
+STOP_TIMEOUT = 0.4
 CLOSE_MESSAGE = "close"
 KILL_ME_MESSAGE = "kill me"
 

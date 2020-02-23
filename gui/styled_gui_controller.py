@@ -24,6 +24,13 @@ class SyncConfig(enum.IntEnum):
     B_CHAN = 2
 
 
+class HiddenRGBTab(object):
+    def __init__(self, index=-1, name: str = None, widget: QtWidgets.QWidget = None):
+        self.index = index
+        self.name = name
+        self.widget = widget
+
+
 class StyledGuiController(QtWidgets.QWidget):
     POINTS_JSON_KEY = "points"
     RGB_CHAN_JSON_KEYS = ["r", "g", "b"]
@@ -36,6 +43,10 @@ class StyledGuiController(QtWidgets.QWidget):
         super(self.__class__, self).__init__()
         self.gui = gui
         self.db = db_config.DB.build_default()
+
+        self.hidden_rgb_tabs = [
+            HiddenRGBTab(idx, self.gui.tw_led_curve_channel.tabText(idx), self.gui.tw_led_curve_channel.widget(idx)) for
+            idx in range(self.gui.tw_led_curve_channel.count())]
 
         if os.path.isfile(constants.DB_FILE_NAME):
             try:
@@ -189,7 +200,8 @@ class StyledGuiController(QtWidgets.QWidget):
         edited_index = triggering_cb.currentIndex()
         triggering_cb.setItemText(edited_index, new_sensor_name)
 
-        for cb in [self.gui.cb_temperature_display_selection, self.gui.cb_fan_curve_temperature_source_selection, self.gui.cb_led_curve_temperature_source_selection]:
+        for cb in [self.gui.cb_temperature_display_selection, self.gui.cb_fan_curve_temperature_source_selection,
+                   self.gui.cb_led_curve_temperature_source_selection]:
             if cb is triggering_cb:
                 continue
             cb.setItemText(edited_index, new_sensor_name)
@@ -397,15 +409,50 @@ class StyledGuiController(QtWidgets.QWidget):
         driver_process.send_led_curve(self.gui.cb_led_curve_selection.currentIndex(), json.dumps(curves_dict))
 
     def update_editable_led_curves_(self):
-        for tab_idx in range(len(self.gui.rgb_tabs)):
-            cb_sync_idx = self.gui.rgb_sync_combo_boxes[tab_idx].currentIndex()
+        for data_tab_idx in range(len(self.gui.rgb_tabs)):
+            cb_sync_idx = self.gui.rgb_sync_combo_boxes[data_tab_idx].currentIndex()
             if cb_sync_idx != 0:
-                self.gui.rgb_tabs[tab_idx].setEnabled(False)
+                if self.gui.rgb_tabs[data_tab_idx].isEnabled():
+                    gui_tab_idx = self.gui_rgb_tab_idx_(self.hidden_rgb_tabs[data_tab_idx].name)
+                    self.gui.tw_led_curve_channel.removeTab(gui_tab_idx)
+                    self.gui.rgb_tabs[data_tab_idx].setEnabled(False)
             else:
-                self.gui.rgb_tabs[tab_idx].setEnabled(True)
+                if not self.gui.rgb_tabs[data_tab_idx].isEnabled():
+                    gui_tab_idx = self.gui_tab_rgb_insertion_point_(self.hidden_rgb_tabs[data_tab_idx].name)
+                    print(gui_tab_idx)
+                    self.gui.tw_led_curve_channel.insertTab(gui_tab_idx, self.hidden_rgb_tabs[data_tab_idx].widget,
+                                                            self.hidden_rgb_tabs[data_tab_idx].name)
+                    self.gui.rgb_tabs[data_tab_idx].setEnabled(True)
+
+    def gui_rgb_tab_idx_(self, tab_name):
+        for idx in range(self.gui.tw_led_curve_channel.count()):
+            if self.gui.tw_led_curve_channel.tabText(idx) == tab_name:
+                return idx
+
+    def data_rgb_tab_idx_(self, tab_name):
+        for idx, hidden_tab in enumerate(self.hidden_rgb_tabs):
+            if hidden_tab.name == tab_name:
+                return idx
+
+    def gui_tab_rgb_insertion_point_(self, tab_name):
+        data_tab_idx = self.data_rgb_tab_idx_(tab_name)
+        candidate_insertion_point_ = 0
+
+        for gui_tab_idx in range(self.gui.tw_led_curve_channel.count()):
+            gui_tab_name = self.gui.tw_led_curve_channel.tabText(gui_tab_idx)
+            guis_data_tab_idx = self.data_rgb_tab_idx_(gui_tab_name)
+            if data_tab_idx > guis_data_tab_idx:
+                candidate_insertion_point_ = gui_tab_idx + 1
+
+        return candidate_insertion_point_
 
     @QtCore.pyqtSlot(int, int)
     def on_cb_rgb_channel_sync_currentIndexChanged(self, cb_index, index):
+        if self.gui.tw_led_curve_channel.count() == 1:
+            if not any(cb.currentIndex() == 0 for cb in self.gui.rgb_sync_combo_boxes):
+                self.gui.rgb_sync_combo_boxes[cb_index].setCurrentIndex(0)
+                return
+
         led_index = self.gui.cb_fan_curve_selection.currentIndex()
         self.db.led_configs[led_index].channel_sync[cb_index] = index - 1
 
@@ -537,6 +584,8 @@ class StyledGuiController(QtWidgets.QWidget):
             cb.blockSignals(True)
             cb.setCurrentIndex(self.db.led_configs[index].channel_sync[idx] + 1)
             cb.blockSignals(False)
+
+        self.update_editable_led_curves_()
 
 
 def round_to_ten(value):

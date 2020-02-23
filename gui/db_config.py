@@ -35,8 +35,6 @@ class LEDConfig(SerializableClass):
     def __init__(self):
         self.index = SerializableClass.INVALID_INDEX
         self.name = ""
-        # self.temperature_source = SerializableClass.INVALID_INDEX
-        # self.time_controlled = True
         self.channel_sync = [SerializableClass.INVALID_INDEX]
         self.channel_sync += [0 for _ in range(leviathans_breath.NUM_LED_CHANNELS() - 1)]
 
@@ -87,9 +85,6 @@ class DB(object):
         self.led_presets = []  # type: list[LEDCurvePreset]
         self.gui_config = GuiConfig()
 
-        # self.fan_configs_name_map_ = dict()
-        # self.led_configs_name_map_ = dict()
-        # self.temperature_configs_name_map_ = dict()
         self.fan_presets_name_map_ = dict()
         self.led_presets_name_map_ = dict()
 
@@ -99,14 +94,6 @@ class DB(object):
         self.fan_presets_name_map_.clear()
         self.led_presets_name_map_.clear()
 
-        # for name_map in [self.fan_configs_name_map_, self.led_configs_name_map_, self.temperature_configs_name_map_,
-        #                  self.fan_presets_name_map_, self.led_presets_name_map_]:
-        #     name_map.clear()
-        #
-        # self.fan_configs_name_map_ = {fan_config.name: fan_config for fan_config in self.fan_configs}
-        # self.led_configs_name_map_ = {led_config.name: led_config for led_config in self.led_configs}
-        # self.temperature_configs_name_map_ = {temperature_config.name: temperature_config for temperature_config
-        #                                       in self.temperature_configs}
         self.fan_presets_name_map_ = {fan_preset.name: fan_preset for fan_preset in self.fan_presets}
         self.led_presets_name_map_ = {led_preset.name: led_preset for led_preset in self.led_presets}
 
@@ -117,7 +104,6 @@ class DB(object):
             config = FanConfig()
             config.index = idx
             config.name = "FAN{}".format(idx + 1)
-            # config.temperature_source = 0
             ret.fan_configs.append(config)
         for idx in range(leviathans_breath.NUM_LEDS()):
             config = LEDConfig()
@@ -213,15 +199,6 @@ class DB(object):
 
     def __str__(self):
         return yaml.dump(self.to_dict())
-
-    # def get_fan_config(self, name):
-    #     return self.fan_configs_name_map_[name]
-    #
-    # def get_led_config(self, name):
-    #     return self.led_configs_name_map_[name]
-    #
-    # def get_temperature_config(self, name):
-    #     return self.temperature_configs[name]
 
     def get_fan_preset(self, name) -> FanCurvePreset:
         return self.fan_presets_name_map_[name]
