@@ -14,6 +14,7 @@ class SpinningLabelImage(QtWidgets.QLabel):
             valueChanged=self.on_valueChanged,
             loopCount=-1
         )
+        self.transform = QtGui.QTransform()
 
     def set_pixmap(self, pixmap):
         self._pixmap = pixmap
@@ -32,9 +33,10 @@ class SpinningLabelImage(QtWidgets.QLabel):
 
     @QtCore.pyqtSlot(QtCore.QVariant)
     def on_valueChanged(self, value):
-        t = QtGui.QTransform()
-        t.rotate(value)
-        self.setPixmap(self._pixmap.transformed(t))
+        # t = QtGui.QTransform()
+        # t.rotate(value)
+        self.transform.rotate(value)
+        self.setPixmap(self._pixmap.transformed(self.transform))
 
 
 class Widget(QtWidgets.QWidget):

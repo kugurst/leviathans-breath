@@ -14,10 +14,8 @@ def setup_gui():
     pg.setConfigOptions(antialias=True)
 
     app = QtWidgets.QApplication(sys.argv)
-
-    with open("gui.css", "r") as css_file:
-        css = css_file.read()
-    app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5') + "\n" + css)
+    style = styled_gui.GroupBoxProxyStyle(app.style())
+    app.setStyle(style)
 
     ui = styled_gui.StyledGui()
     ui.setupUi()
@@ -29,8 +27,12 @@ def main():
     driver_process.start_driver_process()
 
     ui, app = setup_gui()
-    styled_gui_controller.StyledGuiController(ui)
+    controller = styled_gui_controller.StyledGuiController(ui)
     ui.show()
+
+    with open("gui.css", "r") as css_file:
+        css = css_file.read()
+    app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5') + "\n" + css)
 
     ret = app.exec_()
 

@@ -74,6 +74,8 @@ class StyledGuiController(QtWidgets.QWidget):
         self.populate_widgets()
         self.connect_signals()
 
+        self.define_css_classes()
+
     def populate_widgets(self):
         self.populate_combo_boxes_()
         self.populate_status_buttons_()
@@ -131,8 +133,6 @@ class StyledGuiController(QtWidgets.QWidget):
         self.gui.fan_curve.set_view_range(
             (self.db.gui_config.min_fan_curve_temperature, self.db.gui_config.max_fan_curve_temperature), (0, 100))
 
-        # print(self.gui.temperature_series.graph.getViewWidget().setBackgroundBrush())
-
     def connect_signals(self):
         self.gui.cb_fan_curve_selection.currentIndexChanged.connect(self.on_cb_fan_curve_selection_currentIndexChanged)
         self.gui.cb_led_curve_selection.currentIndexChanged.connect(self.on_cb_led_curve_selection_currentIndexChanged)
@@ -178,17 +178,40 @@ class StyledGuiController(QtWidgets.QWidget):
 
         self.gui.cb_temperature_display_selection.lineEdit().editingFinished.connect(
             lambda: self.on_cb_temperature_display_selection_editingFinished(self.gui.cb_temperature_display_selection))
-        # self.gui.cb_fan_curve_temperature_source_selection.lineEdit().editingFinished.connect(
-        #     lambda: self.on_cb_temperature_display_selection_editingFinished(
-        #         self.gui.cb_fan_curve_temperature_source_selection))
-        # self.gui.cb_led_curve_temperature_source_selection.lineEdit().editingFinished.connect(
-        #     lambda: self.on_cb_temperature_display_selection_editingFinished(
-        #         self.gui.cb_led_curve_temperature_source_selection))
 
         self.gui.cb_fan_curve_selection.lineEdit().editingFinished.connect(
             self.on_cb_fan_curve_selection_editingFinished)
         self.gui.cb_led_curve_selection.lineEdit().editingFinished.connect(
             self.on_cb_led_curve_selection_editingFinished)
+
+    def define_css_classes(self):
+        for attr_name in vars(self.gui):
+            elem = getattr(self.gui, attr_name)
+            # if isinstance(elem, QtWidgets.QGroupBox):
+            #     print(len(elem.children()))
+            #     print(elem.objectName())
+            # if isinstance(elem, QtWidgets.QFrame):
+            #     elem.setStyleSheet("border-style: none")
+        for curve in [*self.gui.rgb_channel_curves, self.gui.fan_curve, self.gui.temperature_series]:
+            curve.widget.setProperty("class", "curve_graph")
+            curve.widget.setStyleSheet("border-style: none")
+        for gb_frame in [self.gui.f_temperature_display_anim, self.gui.f_fan_curve_editor_anim,
+                         self.gui.f_led_curve_editor_anim]:
+            gb_frame.setProperty("class", "main_frame")
+
+        for frame in [self.gui.f_fan_options_preset, self.gui.f_fan_curve_temperature_source, self.gui.f_pwm_controlled,
+                      self.gui.f_channel_sync_options, self.gui.f_led_curve_control_selection,
+                      self.gui.f_led_curve_temperature, self.gui.f_speed_multiplier, self.gui.f_led_options_preset]:
+            frame.setProperty("class_", "option_frame")
+
+        for pb in [self.gui.pb_led_options_save, self.gui.pb_fan_options_save]:
+            pb.setProperty("class_", "save_button")
+        for pb in [self.gui.pb_led_options_load, self.gui.pb_fan_options_load]:
+            pb.setProperty("class_", "load_button")
+
+        # self.gui.tw_led_curve_channel.setStyleSheet("margin-bottom: 0.5em")
+        # self.gui.tw_led_curve_channel.setProperty("class_", "led_tabs")
+        # # self.gui.tw_led_curve_channel.setObjectName("tw_led_curve_channel")
 
     @QtCore.pyqtSlot(QtWidgets.QComboBox)
     def on_cb_temperature_display_selection_editingFinished(self, triggering_cb):
@@ -419,7 +442,6 @@ class StyledGuiController(QtWidgets.QWidget):
             else:
                 if not self.gui.rgb_tabs[data_tab_idx].isEnabled():
                     gui_tab_idx = self.gui_tab_rgb_insertion_point_(self.hidden_rgb_tabs[data_tab_idx].name)
-                    print(gui_tab_idx)
                     self.gui.tw_led_curve_channel.insertTab(gui_tab_idx, self.hidden_rgb_tabs[data_tab_idx].widget,
                                                             self.hidden_rgb_tabs[data_tab_idx].name)
                     self.gui.rgb_tabs[data_tab_idx].setEnabled(True)

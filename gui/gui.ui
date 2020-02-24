@@ -32,12 +32,27 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-302</y>
+          <y>-112</y>
           <width>681</width>
-          <height>859</height>
+          <height>669</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gl_sawc_chart">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <item row="1" column="0">
           <widget class="QGroupBox" name="gb_fan_curve_editor">
            <property name="title">
@@ -47,6 +62,21 @@
             <bool>true</bool>
            </property>
            <layout class="QGridLayout" name="gl_fan_curve_editor">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <property name="spacing">
+             <number>0</number>
+            </property>
             <item row="0" column="0">
              <widget class="QFrame" name="f_fan_curve_editor_anim">
               <property name="frameShape">
@@ -80,6 +110,24 @@
                   <bool>true</bool>
                  </property>
                  <layout class="QFormLayout" name="formLayout">
+                  <property name="horizontalSpacing">
+                   <number>0</number>
+                  </property>
+                  <property name="verticalSpacing">
+                   <number>0</number>
+                  </property>
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
                   <item row="0" column="0" colspan="2">
                    <widget class="QFrame" name="f_fan_curve_options_anim">
                     <property name="frameShape">
@@ -88,7 +136,10 @@
                     <property name="frameShadow">
                      <enum>QFrame::Raised</enum>
                     </property>
-                    <layout class="QGridLayout" name="gl_fan_curve_options_anim">
+                    <layout class="QVBoxLayout" name="verticalLayout">
+                     <property name="spacing">
+                      <number>0</number>
+                     </property>
                      <property name="leftMargin">
                       <number>0</number>
                      </property>
@@ -101,10 +152,7 @@
                      <property name="bottomMargin">
                       <number>0</number>
                      </property>
-                     <property name="spacing">
-                      <number>0</number>
-                     </property>
-                     <item row="0" column="0">
+                     <item>
                       <widget class="QFrame" name="f_fan_options_preset">
                        <property name="frameShape">
                         <enum>QFrame::StyledPanel</enum>
@@ -113,6 +161,21 @@
                         <enum>QFrame::Raised</enum>
                        </property>
                        <layout class="QHBoxLayout" name="horizontalLayout">
+                        <property name="spacing">
+                         <number>0</number>
+                        </property>
+                        <property name="leftMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="topMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="rightMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="bottomMargin">
+                         <number>0</number>
+                        </property>
                         <item>
                          <widget class="QLabel" name="label_6">
                           <property name="text">
@@ -160,7 +223,7 @@
                        </layout>
                       </widget>
                      </item>
-                     <item row="1" column="0">
+                     <item>
                       <widget class="QFrame" name="f_fan_curve_temperature_source">
                        <property name="frameShape">
                         <enum>QFrame::StyledPanel</enum>
@@ -169,10 +232,25 @@
                         <enum>QFrame::Raised</enum>
                        </property>
                        <layout class="QHBoxLayout" name="horizontalLayout_3">
+                        <property name="spacing">
+                         <number>0</number>
+                        </property>
+                        <property name="leftMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="topMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="rightMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="bottomMargin">
+                         <number>0</number>
+                        </property>
                         <item>
                          <widget class="QLabel" name="label_4">
                           <property name="text">
-                           <string>Temperature Source:</string>
+                           <string>Temperature Source</string>
                           </property>
                          </widget>
                         </item>
@@ -195,7 +273,7 @@
                        </layout>
                       </widget>
                      </item>
-                     <item row="2" column="0">
+                     <item>
                       <widget class="QFrame" name="f_pwm_controlled">
                        <property name="frameShape">
                         <enum>QFrame::StyledPanel</enum>
@@ -204,6 +282,27 @@
                         <enum>QFrame::Raised</enum>
                        </property>
                        <layout class="QFormLayout" name="formLayout_4">
+                        <property name="formAlignment">
+                         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                        </property>
+                        <property name="horizontalSpacing">
+                         <number>0</number>
+                        </property>
+                        <property name="verticalSpacing">
+                         <number>0</number>
+                        </property>
+                        <property name="leftMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="topMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="rightMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="bottomMargin">
+                         <number>0</number>
+                        </property>
                         <item row="0" column="0">
                          <widget class="QCheckBox" name="cb_pwm_controlled">
                           <property name="text">
@@ -278,6 +377,21 @@
             <bool>true</bool>
            </property>
            <layout class="QGridLayout" name="gridLayout_6">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <property name="spacing">
+             <number>0</number>
+            </property>
             <item row="0" column="0">
              <widget class="QFrame" name="f_temperature_display_anim">
               <property name="sizePolicy">
@@ -360,6 +474,21 @@
             <bool>true</bool>
            </property>
            <layout class="QGridLayout" name="gridLayout_14">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <property name="spacing">
+             <number>0</number>
+            </property>
             <item row="1" column="0">
              <widget class="QFrame" name="f_led_curve_editor_anim">
               <property name="frameShape">
@@ -394,6 +523,21 @@
                    <string>R</string>
                   </attribute>
                   <layout class="QGridLayout" name="gridLayout_15">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
                    <item row="0" column="0">
                     <widget class="QFrame" name="f_tw_led_channel_t_r_ph">
                      <property name="frameShape">
@@ -401,6 +545,9 @@
                      </property>
                      <property name="frameShadow">
                       <enum>QFrame::Raised</enum>
+                     </property>
+                     <property name="lineWidth">
+                      <number>0</number>
                      </property>
                      <layout class="QGridLayout" name="gl_tw_led_channel_t_r_ph">
                       <property name="leftMargin">
@@ -428,6 +575,21 @@
                    <string>G</string>
                   </attribute>
                   <layout class="QGridLayout" name="gridLayout_17">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
                    <item row="0" column="0">
                     <widget class="QFrame" name="f_tw_led_channel_t_g_ph">
                      <property name="frameShape">
@@ -435,6 +597,9 @@
                      </property>
                      <property name="frameShadow">
                       <enum>QFrame::Raised</enum>
+                     </property>
+                     <property name="lineWidth">
+                      <number>0</number>
                      </property>
                      <layout class="QGridLayout" name="gl_tw_led_channel_t_g_ph">
                       <property name="leftMargin">
@@ -462,6 +627,21 @@
                    <string>B</string>
                   </attribute>
                   <layout class="QGridLayout" name="gridLayout_18">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
                    <item row="0" column="0">
                     <widget class="QFrame" name="f_tw_led_channel_t_b_ph">
                      <property name="frameShape">
@@ -469,6 +649,9 @@
                      </property>
                      <property name="frameShadow">
                       <enum>QFrame::Raised</enum>
+                     </property>
+                     <property name="lineWidth">
+                      <number>0</number>
                      </property>
                      <layout class="QGridLayout" name="gl_tw_led_channel_t_b_ph">
                       <property name="leftMargin">
@@ -502,6 +685,21 @@
                   <bool>true</bool>
                  </property>
                  <layout class="QGridLayout" name="gridLayout_16">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
                   <item row="2" column="0">
                    <widget class="QFrame" name="f_led_options_anim">
                     <property name="frameShape">
@@ -510,7 +708,10 @@
                     <property name="frameShadow">
                      <enum>QFrame::Raised</enum>
                     </property>
-                    <layout class="QGridLayout" name="gl_led_options_anim">
+                    <layout class="QVBoxLayout" name="verticalLayout_2">
+                     <property name="spacing">
+                      <number>0</number>
+                     </property>
                      <property name="leftMargin">
                       <number>0</number>
                      </property>
@@ -523,116 +724,7 @@
                      <property name="bottomMargin">
                       <number>0</number>
                      </property>
-                     <property name="spacing">
-                      <number>0</number>
-                     </property>
-                     <item row="2" column="0">
-                      <widget class="QFrame" name="f_led_curve_temperature">
-                       <property name="frameShape">
-                        <enum>QFrame::StyledPanel</enum>
-                       </property>
-                       <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
-                       </property>
-                       <layout class="QHBoxLayout" name="horizontalLayout_4">
-                        <item>
-                         <widget class="QLabel" name="label_5">
-                          <property name="text">
-                           <string>Temperature Source:</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QComboBox" name="cb_led_curve_temperature_source_selection">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="editable">
-                           <bool>false</bool>
-                          </property>
-                          <property name="insertPolicy">
-                           <enum>QComboBox::NoInsert</enum>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
-                      </widget>
-                     </item>
-                     <item row="3" column="0">
-                      <widget class="QFrame" name="f_led_curve_control_selection">
-                       <property name="frameShape">
-                        <enum>QFrame::StyledPanel</enum>
-                       </property>
-                       <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
-                       </property>
-                       <layout class="QFormLayout" name="formLayout_2">
-                        <item row="0" column="0">
-                         <widget class="QRadioButton" name="rb_time_controlled">
-                          <property name="text">
-                           <string>Time Controlled</string>
-                          </property>
-                          <property name="checked">
-                           <bool>true</bool>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="0" column="1">
-                         <widget class="QRadioButton" name="rb_temperature_controlled">
-                          <property name="text">
-                           <string>Temperature Controlled</string>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
-                      </widget>
-                     </item>
-                     <item row="4" column="0">
-                      <widget class="QFrame" name="f_channel_sync_options">
-                       <property name="frameShape">
-                        <enum>QFrame::StyledPanel</enum>
-                       </property>
-                       <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
-                       </property>
-                       <layout class="QGridLayout" name="gridLayout_13">
-                        <item row="0" column="0">
-                         <widget class="QLabel" name="label">
-                          <property name="text">
-                           <string>Sync R Channel To...</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="1" column="0">
-                         <widget class="QComboBox" name="cb_r_channel_sync"/>
-                        </item>
-                        <item row="1" column="1">
-                         <widget class="QComboBox" name="cb_g_channel_sync"/>
-                        </item>
-                        <item row="0" column="1">
-                         <widget class="QLabel" name="label_2">
-                          <property name="text">
-                           <string>Sync G Channel To...</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="0" column="2">
-                         <widget class="QLabel" name="label_3">
-                          <property name="text">
-                           <string>Sync B Channel To...</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item row="1" column="2">
-                         <widget class="QComboBox" name="cb_b_channel_sync"/>
-                        </item>
-                       </layout>
-                      </widget>
-                     </item>
-                     <item row="0" column="0">
+                     <item>
                       <widget class="QFrame" name="f_led_options_preset">
                        <property name="frameShape">
                         <enum>QFrame::StyledPanel</enum>
@@ -641,6 +733,21 @@
                         <enum>QFrame::Raised</enum>
                        </property>
                        <layout class="QHBoxLayout" name="horizontalLayout_2">
+                        <property name="spacing">
+                         <number>0</number>
+                        </property>
+                        <property name="leftMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="topMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="rightMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="bottomMargin">
+                         <number>0</number>
+                        </property>
                         <item>
                          <widget class="QLabel" name="label_7">
                           <property name="text">
@@ -688,8 +795,8 @@
                        </layout>
                       </widget>
                      </item>
-                     <item row="1" column="0">
-                      <widget class="QFrame" name="frame">
+                     <item>
+                      <widget class="QFrame" name="f_speed_multiplier">
                        <property name="frameShape">
                         <enum>QFrame::StyledPanel</enum>
                        </property>
@@ -697,10 +804,25 @@
                         <enum>QFrame::Raised</enum>
                        </property>
                        <layout class="QHBoxLayout" name="horizontalLayout_5">
+                        <property name="spacing">
+                         <number>0</number>
+                        </property>
+                        <property name="leftMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="topMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="rightMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="bottomMargin">
+                         <number>0</number>
+                        </property>
                         <item>
                          <widget class="QLabel" name="label_8">
                           <property name="text">
-                           <string>Speed Multiplier:</string>
+                           <string>Speed Multiplier</string>
                           </property>
                          </widget>
                         </item>
@@ -725,6 +847,163 @@
                            <double>0.250000000000000</double>
                           </property>
                          </widget>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QFrame" name="f_led_curve_temperature">
+                       <property name="frameShape">
+                        <enum>QFrame::StyledPanel</enum>
+                       </property>
+                       <property name="frameShadow">
+                        <enum>QFrame::Raised</enum>
+                       </property>
+                       <layout class="QHBoxLayout" name="horizontalLayout_4">
+                        <property name="spacing">
+                         <number>0</number>
+                        </property>
+                        <property name="leftMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="topMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="rightMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="bottomMargin">
+                         <number>0</number>
+                        </property>
+                        <item>
+                         <widget class="QLabel" name="label_5">
+                          <property name="text">
+                           <string>Temperature Source</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QComboBox" name="cb_led_curve_temperature_source_selection">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="editable">
+                           <bool>false</bool>
+                          </property>
+                          <property name="insertPolicy">
+                           <enum>QComboBox::NoInsert</enum>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QFrame" name="f_led_curve_control_selection">
+                       <property name="frameShape">
+                        <enum>QFrame::StyledPanel</enum>
+                       </property>
+                       <property name="frameShadow">
+                        <enum>QFrame::Raised</enum>
+                       </property>
+                       <layout class="QFormLayout" name="formLayout_2">
+                        <property name="formAlignment">
+                         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                        </property>
+                        <property name="horizontalSpacing">
+                         <number>0</number>
+                        </property>
+                        <property name="verticalSpacing">
+                         <number>0</number>
+                        </property>
+                        <property name="leftMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="topMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="rightMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="bottomMargin">
+                         <number>0</number>
+                        </property>
+                        <item row="0" column="0">
+                         <widget class="QRadioButton" name="rb_time_controlled">
+                          <property name="text">
+                           <string>Time Controlled</string>
+                          </property>
+                          <property name="checked">
+                           <bool>true</bool>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="1">
+                         <widget class="QRadioButton" name="rb_temperature_controlled">
+                          <property name="text">
+                           <string>Temperature Controlled</string>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QFrame" name="f_channel_sync_options">
+                       <property name="frameShape">
+                        <enum>QFrame::StyledPanel</enum>
+                       </property>
+                       <property name="frameShadow">
+                        <enum>QFrame::Raised</enum>
+                       </property>
+                       <layout class="QGridLayout" name="gridLayout_13">
+                        <property name="leftMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="topMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="rightMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="bottomMargin">
+                         <number>0</number>
+                        </property>
+                        <property name="spacing">
+                         <number>0</number>
+                        </property>
+                        <item row="0" column="0">
+                         <widget class="QLabel" name="label">
+                          <property name="text">
+                           <string>Sync R Channel To...</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="0">
+                         <widget class="QComboBox" name="cb_r_channel_sync"/>
+                        </item>
+                        <item row="1" column="1">
+                         <widget class="QComboBox" name="cb_g_channel_sync"/>
+                        </item>
+                        <item row="0" column="1">
+                         <widget class="QLabel" name="label_2">
+                          <property name="text">
+                           <string>Sync G Channel To...</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="2">
+                         <widget class="QLabel" name="label_3">
+                          <property name="text">
+                           <string>Sync B Channel To...</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="2">
+                         <widget class="QComboBox" name="cb_b_channel_sync"/>
                         </item>
                        </layout>
                       </widget>
@@ -768,6 +1047,21 @@
         <enum>QFrame::Raised</enum>
        </property>
        <layout class="QGridLayout" name="gridLayout">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>0</number>
+        </property>
         <item row="0" column="0">
          <widget class="QGroupBox" name="gb_fan_status">
           <property name="sizePolicy">
@@ -780,6 +1074,21 @@
            <string>Fan Status</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_10">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <item row="0" column="0">
             <widget class="QScrollArea" name="sa_fan_status">
              <property name="sizePolicy">
@@ -796,8 +1105,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>233</width>
-                <height>471</height>
+                <width>257</width>
+                <height>507</height>
                </rect>
               </property>
               <property name="sizePolicy">
@@ -806,7 +1115,23 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <layout class="QGridLayout" name="gridLayout_9"/>
+              <layout class="QGridLayout" name="gridLayout_9">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <property name="spacing">
+                <number>0</number>
+               </property>
+              </layout>
              </widget>
             </widget>
            </item>
@@ -829,7 +1154,7 @@
             <number>0</number>
            </property>
            <property name="topMargin">
-            <number>6</number>
+            <number>0</number>
            </property>
            <property name="rightMargin">
             <number>0</number>

@@ -15,9 +15,19 @@ QFrame {
     margin: 0;
 }
 
-QGridLayout {
-    padding: 0;
-    margin: 0;
+/*QGroupBox {*/
+/*    padding: 0;*/
+/*    !*margin: 20%;*!*/
+/*}*/
+
+QFrame, QGroupBox, QWidget, QTabWidget {
+    border-style: none;
+}
+
+#f_fan_and_preview, #f_led_curve_editor_anim, #f_fan_curve_editor_anim, #f_temperature_display_anim,
+#f_temperature_display_ph, #f_fan_curve_ph, #f_tw_led_channel_t_r_ph, #f_tw_led_channel_t_g_ph,
+#f_tw_led_channel_t_b_ph {
+    border-style: none;
 }
 
 #sawc_fan_status QLabel {
@@ -30,42 +40,202 @@ QGridLayout {
 /*    -webkit-text-stroke: 4px navy; */
 /*}*/
 
-*[class=fan_container] {
+*[class_=fan_container] {
     background-color: rgba(255, 255, 255, 0.1);
+    margin: 0em 0em 0.33em 0.66em;
 }
 
-*[class=img_frame] {
-    background-color: rgba(255, 255, 255, 0);
+*[class_=fan_container] QFrame {
+    /*background-color: rgba(255, 255, 255, 0.1);*/
+    /*margin: 0.33em;*/
+    border-radius: 0;
 }
 
-*[class=fan_container] QLabel {
+*[class_=fan_container] QLabel {
     background-color: rgba(255, 255, 255, 0);
     /*color: black;*/
 }
 
-/*QScrollBar:vertical { border: 2px solid grey; background: #32CC99; height: 15px; margin: 0px 20px 0 20px; }*/
-/*QScrollBar:vertical {*/
-/*    border: 1px solid #999999;*/
-/*    background:white;*/
-/*    width:10px;*/
-/*    margin: 0px 0px 0px 0px;*/
+*[faux-class=img_frame] {
+    background-color: rgba(255, 255, 255, 0);
+}
+
+*[faux-class=led-button] {
+    border-radius: 0;
+    margin: 0.33em 0 0 0;
+}
+
+#gb_led_preview {
+    margin-top: 1.66em;
+    margin-left: 0.67em;
+    margin-right: 0.33em;
+}
+
+#gb_fan_status {
+    margin-top: 2.25em;
+    margin-bottom: 1em;
+    /*margin-left: -2em;*/
+    /*margin-right: -0.33em;*/
+}
+
+#cb_pwm_controlled {
+    background-color: rgba(255, 255, 255, 0);
+}
+
+*[class=curve_graph] {
+    /*border-style: none;*/
+}
+
+QComboBox {
+    /*border: 1px solid gray;*/
+    /*border-radius: 3px;*/
+    padding: 1px 18px 1px 3px;
+    /*min-width: 6em;*/
+}
+
+/*QGroupBox {*/
+/*    background-color: rgba(255, 255, 255, 0.1);*/
 /*}*/
-/*QScrollBar::handle:vertical {*/
-/*    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,*/
-/*    stop: 0 rgb(32, 47, 130), stop: 0.5 rgb(32, 47, 130), stop:1 rgb(32, 47, 130));*/
-/*    min-height: 0px;*/
+
+*[class=main_frame] {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+*[class=main_frame] {
+    margin-top: 0.75em;
+    padding: 1.5em;
+}
+
+*[class=main_frame] QGroupBox {
+    background-color: rgba(255, 255, 255, 0);
+}
+
+/*QGroupBox::title {*/
+/*    subcontrol-origin:  margin;*/
+/*    subcontrol-position: top left;    // for second image:  top;*/
+/*    padding: 0 2px 0 2px;*/
 /*}*/
-/*QScrollBar::add-line:vertical {*/
-/*    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,*/
-/*    stop: 0 rgb(32, 47, 130), stop: 0.5 rgb(32, 47, 130),  stop:1 rgb(32, 47, 130));*/
-/*    height: 0px;*/
-/*    subcontrol-position: bottom;*/
-/*    subcontrol-origin: margin;*/
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top center; /* position at the top center */
+    /*left: 7px;*/
+    padding: 0;
+}
+
+#gb_led_curve_editor, #gb_fan_curve_editor, #gb_temperature_display {
+    margin: 1.5em 1.5em 1.5em 1.5em;
+}
+
+#f_led_options_anim, #f_fan_curve_options_anim {
+    border-style: none;
+    margin-left: 0.75em;
+    border-radius: 0;
+}
+
+*[class_=option_frame] {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0 0.5em 0 0;
+    /*border: 1px solid black;*/
+    border-style: none;
+    border-radius: 0;
+}
+
+*[class_=option_frame] QLabel {
+    background-color: rgba(255, 255, 255, 0);
+    padding-right: 0.5em;
+}
+
+*[class_=option_frame] QRadioButton {
+    background-color: rgba(255, 255, 255, 0);
+    vertical-align: center;
+}
+
+/**[class_=option_frame] QPushButton {*/
+/*    border-radius: 0;*/
 /*}*/
-/*QScrollBar::sub-line:vertical {*/
-/*    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,*/
-/*    stop: 0  rgb(32, 47, 130), stop: 0.5 rgb(32, 47, 130),  stop:1 rgb(32, 47, 130));*/
-/*    height: 0 px;*/
-/*    subcontrol-position: top;*/
-/*    subcontrol-origin: margin;*/
+
+#pb_fan_options_save, #pb_led_options_save {
+    margin-left: 0.5em;
+    border-bottom-right-radius: 1em;
+    border-top-right-radius: 1em;
+}
+
+#pb_fan_options_load, #pb_led_options_load {
+    border-radius: 0;
+}
+
+#pb_fan_options_delete, #pb_led_options_delete {
+    border-bottom-left-radius: 1em;
+    border-top-left-radius: 1em;
+}
+
+#rb_time_controlled {
+    padding-right: 0.5em;
+}
+
+#cb_r_channel_sync, #cb_g_channel_sync {
+    margin-right: 0.5em;
+}
+
+#f_tw_led_channel_t_r_ph, #f_tw_led_channel_t_g_ph, #f_tw_led_channel_t_b_ph {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 0.5em 0.5em 0.5em 0.5em;
+}
+
+#f_fan_curve_ph {
+    background-color: rgba(255, 255, 255, 0.1);
+    margin-bottom: 0.25em;
+    padding: 0.5em 0.5em 0.5em 0.5em;
+}
+
+#f_temperature_display_ph {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.25em;
+}
+
+QTabWidget::pane {
+    border-style: none;
+    margin-bottom: 0.25em;
+    /*padding-top: 1em;*/
+    /*padding-bottom: 1em;*/
+}
+
+#cb_led_curve_temperature_source_selection, #cb_r_channel_sync, #cb_g_channel_sync, #cb_b_channel_sync {
+    /*padding: 1px 18px 1px 3px;*/
+    /*padding-top: 1px;*/
+    /*padding-right: 18px;*/
+    /*padding-bottom: 1px;*/
+    padding-left: 0.6em;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    padding-left: 0.6em;
+    margin-left: 0.6em;
+    /*width: 15px;*/
+
+    /*border-left-width: 1px;*/
+    /*border-left-color: darkgray;*/
+    /*border-left-style: solid; !* just a single line *!*/
+    /*border-top-right-radius: 3px; !* same radius as the QComboBox *!*/
+    /*border-bottom-right-radius: 3px;*/
+}
+
+*[class_=fan_box] {
+    /*border: 2px solid black;*/
+}
+
+/*#f_led_options_preset, #f_speed_multiplier, #f_led_curve_temperature, #f_channel_sync_options {*/
+/*    padding-top: 0;*/
+/*    padding-bottom: 0;*/
+/*    margin-top: 0;*/
+/*    margin-bottom: 0;*/
+/*    height: 1em;*/
+/*}*/
+
+/*#f_fan_curve_ph {*/
+/*    background-color: rgba(255, 255, 255, 0.1);*/
+/*    padding: 0.25em 0 0.25em 0;*/
 /*}*/

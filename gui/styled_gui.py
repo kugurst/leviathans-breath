@@ -71,6 +71,10 @@ class StyledGui(gui.Ui_mw_main, QtWidgets.QMainWindow):
         anim = anims.open_anim if checked else anims.close_anim
         anim.start()
 
+    @QtCore.pyqtSlot(bool)
+    def on_actionExit_triggered(self, state):
+        self.close()
+
     @QtCore.pyqtSlot()
     def on_gb_temperature_display_clicked(self):
         self.animate_gb_open_close(self.gb_temperature_display, self.gb_temperature_display.isChecked())
@@ -115,8 +119,14 @@ class StyledGui(gui.Ui_mw_main, QtWidgets.QMainWindow):
         w.getPlotItem().getViewBox().setMouseEnabled(x=False, y=False)
         x_axis = w.getPlotItem().getAxis("bottom")  # type: pg.AxisItem
         y_axis = w.getPlotItem().getAxis("left")  # type: pg.AxisItem
-        x_axis.setGrid(128)
-        y_axis.setGrid(128)
+        x_axis.setGrid(0)
+
+        x_axis.setStyle(stopAxisAtTick=(False, True))
+        y_axis.setStyle(stopAxisAtTick=(True, True))
+        x_axis.setPen(color=(255, 255, 255))
+        y_axis.setPen(color=(255, 255, 255))
+        # x_axis.setLabel()
+        # x_axis.update()
 
         return w, g
 
@@ -135,9 +145,9 @@ class StyledGui(gui.Ui_mw_main, QtWidgets.QMainWindow):
         self.gl_temperature_display_ph.addWidget(self.temperature_series.widget)
 
         self.temperature_series.graph.setPen(width=5)
-        self.fan_curve.graph.setPen(width=3)
+        self.fan_curve.graph.setPen(width=5)
         for curve in self.rgb_channel_curves:
-            curve.graph.setPen(width=3)
+            curve.graph.setPen(width=5)
 
     def init_spinning_fans(self):
         for idx in range(leviathans_breath.NUM_FANS()):
@@ -147,7 +157,7 @@ class StyledGui(gui.Ui_mw_main, QtWidgets.QMainWindow):
 
             pb = QtWidgets.QPushButton("", self)
             pb.setFlat(True)
-            pb.setProperty("class", "led_preview_button")
+            pb.setProperty("class_", "led_preview_button")
             fan_info_layout.addWidget(pb)  # , 0, 0)
 
             spinning_fan_frame = QtWidgets.QFrame(self)
@@ -160,7 +170,8 @@ class StyledGui(gui.Ui_mw_main, QtWidgets.QMainWindow):
 
             spinning_fan_frame.setFixedHeight(spinning_fan.pixmap().height())
             spinning_fan_frame.setFixedWidth(spinning_fan.pixmap().height())
-            spinning_fan_frame.setProperty("class", "img_frame")
+            spinning_fan_frame.setProperty("faux-class", "img_frame")
+            # spinning_fan_frame.setStyleSheet("background-color: rgba(255, 255, 255, 0)")
             fan_info_layout.setAlignment(spinning_fan_frame, QtCore.Qt.AlignHCenter)
 
             rpm_label = QtWidgets.QLabel("2600 RPM")
@@ -171,7 +182,9 @@ class StyledGui(gui.Ui_mw_main, QtWidgets.QMainWindow):
             fan_info_layout.addWidget(v_p_label)
             fan_info_layout.setAlignment(v_p_label, QtCore.Qt.AlignHCenter)
 
-            fan_info_frame.setProperty("class", "fan_container")
+            fan_info_frame.setProperty("class_", "fan_container")
+            fan_info_frame.setStyleSheet("border-radius: 0")
+            spinning_fan_frame.setProperty("class_", "fan_box")
 
             self.fan_widgets.append(FanSpinningAnimation(spinning_fan, pb, rpm_label, v_p_label))
 
@@ -179,6 +192,7 @@ class StyledGui(gui.Ui_mw_main, QtWidgets.QMainWindow):
         for idx in range(leviathans_breath.NUM_LEDS()):
             pb = QtWidgets.QPushButton("", self)
             pb.setFlat(True)
+            pb.setProperty("faux-class", "led-button")
             self.gl_led_preview.addWidget(pb, idx, 0)
             self.rgb_preview_buttons.append(pb)
 
@@ -210,3 +224,50 @@ class StyledGui(gui.Ui_mw_main, QtWidgets.QMainWindow):
         self.on_gb_led_curve_options_clicked()
         self.gb_fan_curve_options.setChecked(False)
         self.on_gb_fan_curve_options_clicked()
+
+
+# https://stackoverflow.com/questions/55977559/changing-qgroupbox-checkbox-visual-to-an-expander
+class GroupBoxProxyStyle(QtWidgets.QProxyStyle):
+    def subControlRect(self, control, option, subControl, widget):
+        ret = super(GroupBoxProxyStyle, self).subControlRect(
+            control, option, subControl, widget
+        )
+        if (
+                control == QtWidgets.QStyle.CC_GroupBox
+                and subControl == QtWidgets.QStyle.SC_GroupBoxLabel
+                and widget.isCheckable()
+        ):
+            r = self.subControlRect(
+                QtWidgets.QStyle.CC_GroupBox,
+                option,
+                QtWidgets.QStyle.SC_GroupBoxCheckBox,
+                widget,
+            )
+            ret.adjust(r.width(), 0, 0, 0)
+        return ret
+
+    def drawComplexControl(self, control, option, painter, widget):
+        is_group_box = False
+        if control == QtWidgets.QStyle.CC_GroupBox and widget.isCheckable():
+            option.subControls &= ~QtWidgets.QStyle.SC_GroupBoxCheckBox
+            is_group_box = True
+        super(GroupBoxProxyStyle, self).drawComplexControl(
+            control, option, painter, widget
+        )
+        if is_group_box and widget.isCheckable():
+            opt = QtWidgets.QStyleOptionViewItem()
+            opt.rect = self.proxy().subControlRect(
+                QtWidgets.QStyle.CC_GroupBox,
+                option,
+                QtWidgets.QStyle.SC_GroupBoxCheckBox,
+                widget,
+            )
+            opt.state = QtWidgets.QStyle.State_Children
+            opt.state |= (
+                QtWidgets.QStyle.State_Open
+                if widget.isChecked()
+                else QtWidgets.QStyle.State_None
+            )
+            self.drawPrimitive(
+                QtWidgets.QStyle.PE_IndicatorBranch, opt, painter, widget
+            )

@@ -27,6 +27,8 @@ class EditableCurve(pg.GraphItem):
         self.hover_point_callback = None
 
         pg.GraphItem.__init__(self)
+        #
+        # self.setGLOptions('translucent')
 
     def setData(self, **kwds):
         self.data = kwds
@@ -240,6 +242,7 @@ class EditableCurveCollection(object):
         self.view_y = [0, 100]
 
         self.widget.sceneObj.sigMouseMoved.connect(self.graph.mouseMoveEvent)
+        self.widget.setBackground([255, 255, 255, 50])
 
     def set_view_range(self, x_range=None, y_range=None):
         new_x_range, new_y_range = None, None
