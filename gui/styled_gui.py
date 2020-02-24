@@ -125,8 +125,6 @@ class StyledGui(gui.Ui_mw_main, QtWidgets.QMainWindow):
         y_axis.setStyle(stopAxisAtTick=(True, True))
         x_axis.setPen(color=(255, 255, 255))
         y_axis.setPen(color=(255, 255, 255))
-        # x_axis.setLabel()
-        # x_axis.update()
 
         return w, g
 

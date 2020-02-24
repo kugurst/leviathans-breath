@@ -133,6 +133,8 @@ class StyledGuiController(QtWidgets.QWidget):
         self.gui.fan_curve.set_view_range(
             (self.db.gui_config.min_fan_curve_temperature, self.db.gui_config.max_fan_curve_temperature), (0, 100))
 
+        self.gui.temperature_series.widget.getPlotItem().getAxis("bottom").hide()
+
     def connect_signals(self):
         self.gui.cb_fan_curve_selection.currentIndexChanged.connect(self.on_cb_fan_curve_selection_currentIndexChanged)
         self.gui.cb_led_curve_selection.currentIndexChanged.connect(self.on_cb_led_curve_selection_currentIndexChanged)
@@ -185,13 +187,6 @@ class StyledGuiController(QtWidgets.QWidget):
             self.on_cb_led_curve_selection_editingFinished)
 
     def define_css_classes(self):
-        for attr_name in vars(self.gui):
-            elem = getattr(self.gui, attr_name)
-            # if isinstance(elem, QtWidgets.QGroupBox):
-            #     print(len(elem.children()))
-            #     print(elem.objectName())
-            # if isinstance(elem, QtWidgets.QFrame):
-            #     elem.setStyleSheet("border-style: none")
         for curve in [*self.gui.rgb_channel_curves, self.gui.fan_curve, self.gui.temperature_series]:
             curve.widget.setProperty("class", "curve_graph")
             curve.widget.setStyleSheet("border-style: none")
@@ -208,10 +203,6 @@ class StyledGuiController(QtWidgets.QWidget):
             pb.setProperty("class_", "save_button")
         for pb in [self.gui.pb_led_options_load, self.gui.pb_fan_options_load]:
             pb.setProperty("class_", "load_button")
-
-        # self.gui.tw_led_curve_channel.setStyleSheet("margin-bottom: 0.5em")
-        # self.gui.tw_led_curve_channel.setProperty("class_", "led_tabs")
-        # # self.gui.tw_led_curve_channel.setObjectName("tw_led_curve_channel")
 
     @QtCore.pyqtSlot(QtWidgets.QComboBox)
     def on_cb_temperature_display_selection_editingFinished(self, triggering_cb):
