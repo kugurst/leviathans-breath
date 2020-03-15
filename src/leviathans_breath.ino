@@ -48,30 +48,3 @@ void loop() {
 #endif
   }
 }
-
-
-// #include <memory>
-
-// #include <MCP48xx.h>
-// #include <SPI.h>
-
-// std::unique_ptr<MCP4822> dac;
-
-// void setup() {
-//   SPI.setMOSI(27);
-//   SPI.setSCK(28);
-
-//   dac = std::make_unique<MCP4822>(26);
-
-//   dac->init();
-//   dac->turnOnChannelA();
-//   dac->turnOnChannelB();
-//   dac->setGainA(MCP4822::High);
-//   dac->setGainB(MCP4822::High);
-// }
-
-// void loop() {
-//   auto voltage = 12.0f;
-//   dac->setVoltageA(1024.0f / 3.0f * voltage);
-//   dac->updateDAC();
-// }

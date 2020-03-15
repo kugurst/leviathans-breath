@@ -302,7 +302,7 @@ class StyledGuiController(QtWidgets.QWidget):
 
         if len(points) < constants.MAX_TIME_SERIES_POINTS:
             points.append((len(points), temperature))
-            self.gui.temperature_series.graph.setData(pos=np.array(points), size=1, pxMode=True)
+            self.gui.temperature_series.graph.setData(pos=np.array(points), size=0, pxMode=True)
         else:
             readings = readings[1:].tolist()
             readings.append(temperature)

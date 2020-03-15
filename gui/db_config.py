@@ -21,8 +21,6 @@ class FanConfig(SerializableClass):
     def __init__(self):
         self.index = SerializableClass.INVALID_INDEX
         self.name = ""
-        # self.temperature_source = SerializableClass.INVALID_INDEX
-        # self.pwm_controlled = False
 
 
 class TemperatureConfig(SerializableClass):
