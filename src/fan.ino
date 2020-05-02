@@ -6,20 +6,19 @@
 #include <cmath>
 #include <cstring>
 
+#include "constants.hpp"
+#include "pwm_utils.hpp"
+
 namespace LB {
-static const uint16_t MAX_DAC_VALUE = 4095;
-static const uint16_t MAX_PWM_RAW = 4095;
 #ifndef CUSTOM_TACH
 static const uint8_t MAX_RPM_COUNT = 100;
 #else
 static const uint8_t TACH_SAMPLE_DELAY_US = 1;
 #endif
 
-void fan_pre_init() { analogWriteResolution(PWM_RESOLUTION); }
-
 void Fan::init(uint8_t channel, uint8_t tach_pin, uint8_t pwm_pin,
-               SetDacFunc set_voltage_function, bool pwm_controlled) {
-  set_dac_ = set_voltage_function;
+               uint8_t gd_pin, bool pwm_controlled) {
+  gd_pin_ = gd_pin;
   pwm_pin_ = pwm_pin;
   tach_pin_ = tach_pin;
   channel_ = channel;
@@ -29,9 +28,8 @@ void Fan::init(uint8_t channel, uint8_t tach_pin, uint8_t pwm_pin,
 }
 
 void Fan::begin() {
-  pinMode(pwm_pin_, OUTPUT);
-  analogWriteFrequency(pwm_pin_, PWM_HZ);
-  analogWrite(pwm_pin_, pwm_ * MAX_PWM_RAW);
+  init_pwm_pin(pwm_pin_, pwm_ / MAX_PWM * (float)MAX_PWM_RAW);
+  init_pwm_pin(gd_pin_, voltage_ / MAX_VOLTAGE * (float)MAX_PWM_RAW);
 
 #ifdef CUSTOM_TACH
   pinMode(tach_pin_, INPUT);
@@ -39,13 +37,18 @@ void Fan::begin() {
 #else
   rpm_reader_.begin(tach_pin_);
 #endif
-
-  set_dac_(MAX_DAC_VALUE * voltage_);
 }
 
 void Fan::set_voltage(float voltage) {
   voltage_ = fmin(MAX_VOLTAGE, fmax(0, voltage));
-  set_dac_(voltage_ / MAX_VOLTAGE * MAX_DAC_VALUE);
+  auto temp_voltage = MAX_VOLTAGE - voltage_;
+#ifndef DISABLE_SERIAL
+  if (channel_ == 0) {
+    Serial.print("Voltage: ");
+    Serial.println(temp_voltage);
+  }
+#endif
+  analogWrite(gd_pin_, temp_voltage / MAX_VOLTAGE * (float)MAX_PWM_RAW);
 
   if (pwm_controlled_) {
     pwm_controlled_ = false;
@@ -55,11 +58,18 @@ void Fan::set_voltage(float voltage) {
 
 void Fan::set_pwm(float pwm) {
   pwm_ = fmin(MAX_PWM, fmax(0, pwm));
-  analogWrite(pwm_pin_, pwm_ / MAX_PWM * MAX_PWM_RAW);
+  analogWrite(pwm_pin_, pwm_ / MAX_PWM * (float)MAX_PWM_RAW);
+
+#ifndef DISABLE_SERIAL
+  if (channel_ == 0) {
+    Serial.print("Voltage: ");
+    Serial.println(MAX_VOLTAGE - voltage_);
+  }
+#endif
 
   if (!pwm_controlled_) {
     pwm_controlled_ = true;
-    set_dac_(MAX_DAC_VALUE);
+    analogWrite(gd_pin_, 0);
   }
 }
 
@@ -67,9 +77,10 @@ void Fan::set_pwm_controlled(bool pwm_controlled) {
   pwm_controlled_ = pwm_controlled;
   if (pwm_controlled_) {
     voltage_ = MAX_VOLTAGE;
-    set_dac_(MAX_DAC_VALUE);
+    analogWrite(gd_pin_, 0);
   } else {
     pwm_ = MAX_PWM;
+    analogWrite(pwm_pin_, MAX_PWM_RAW);
   }
 }
 

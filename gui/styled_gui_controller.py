@@ -290,6 +290,9 @@ class StyledGuiController(QtWidgets.QWidget):
         temperatures = json.loads(driver_process.get_all_temperatures())[StyledGuiController.TEMPERATURES_JSON_KEY]
         temperature = temperatures[self.gui.cb_temperature_display_selection.currentIndex()]
 
+        if temperature is None:
+            return
+
         try:
             points = self.gui.temperature_series.graph.get_points()
             indices = points[:, 0]

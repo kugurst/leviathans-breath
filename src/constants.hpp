@@ -20,7 +20,11 @@ using CalculatorDimension = FixedPoints::UFixed<10, 22>;
 using Dimension = uint16_t;
 using CalculatorDimension = uint32_t;
 #endif
-using Point = std::tuple<Dimension, Dimension>;
+using Point = ::std::tuple<Dimension, Dimension>;
+
+const uint16_t PWM_HZ = 25000;
+const uint8_t PWM_RESOLUTION = 12;
+static const uint16_t MAX_PWM_RAW = 4095;
 
 const uint8_t X = 0;
 const uint8_t Y = 1;
@@ -34,7 +38,7 @@ struct TemperatureSensorConstants {
 class Constants {
 public:
   static const uint32_t CONFIG_FILE_SIZE_BYTES = 1 << 15;
-  static const uint32_t NUM_FANS = 8;
+  static const uint32_t NUM_FANS = 6;
   static const uint32_t NUM_LEDS = 2;
   static const uint32_t NUM_LED_CHANNELS = 3;
   static const uint32_t NUM_TEMPERATURE_SENSORS = 2;
@@ -57,5 +61,5 @@ public:
       -1.80284535e-04, 4.37755038e-04, -6.24132123e-07};
 };
 
-using ConfigMemType = std::array<uint8_t, Constants::CONFIG_FILE_SIZE_BYTES>;
+using ConfigMemType = ::std::array<uint8_t, Constants::CONFIG_FILE_SIZE_BYTES>;
 } // namespace LB
