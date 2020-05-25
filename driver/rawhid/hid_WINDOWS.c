@@ -27,14 +27,25 @@
  *
  * Version 1.0: Initial Release
  */
+#pragma comment (lib, "hid.lib")
+#pragma comment (lib, "Setupapi.lib")
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <windows.h>
 #include <setupapi.h>
-#include <ddk/hidsdi.h>
-#include <ddk/hidclass.h>
+#include <hidsdi.h>
+#include <hidclass.h>
+
+#ifdef __cplusplus
+}
+#endif
 
 #include "hid.h"
 

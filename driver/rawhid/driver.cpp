@@ -133,7 +133,7 @@ Driver::get_curve_(CurveCommandParameters curve_command) {
   uint16_t packet_offset = sizeof(CurveCommandParameters);
   std::vector<std::tuple<float, float>> points;
   points.reserve(curve_command.curve_length);
-  for (uint i = 0; i < curve_command.curve_length; i++) {
+  for (uint64_t i = 0; i < curve_command.curve_length; i++) {
     if (packet_offset + sizeof(float) * 2 >= HID_BUF_SIZE) {
       RECEIVE_BUF(trx_buf_, {});
       packet_offset = 0;
@@ -158,7 +158,7 @@ bool Driver::send_curve_(CurveCommandParameters curve_command,
   SEND_BUF(trx_buf_, false);
 
   uint16_t packet_offset = 0;
-  for (uint i = 0; i < curve_command.curve_length; i++) {
+  for (uint64_t i = 0; i < curve_command.curve_length; i++) {
     const auto &point = curve[i];
     const auto x = std::get<0>(point);
     const auto y = std::get<1>(point);
@@ -297,7 +297,7 @@ std::string Driver::get_all_fan_rpms() {
   std::array<float, Constants::NUM_FANS> fan_rpms = {};
   uint16_t packet_offset = 0;
   RECEIVE_BUF(trx_buf_, {});
-  for (uint i = 0; i < Constants::NUM_FANS; i++) {
+  for (uint64_t i = 0; i < Constants::NUM_FANS; i++) {
     if (packet_offset + sizeof(float) >= HID_BUF_SIZE) {
       RECEIVE_BUF(trx_buf_, {});
       packet_offset = 0;
@@ -331,7 +331,7 @@ std::string Driver::get_all_temperatures() {
   std::array<float, Constants::NUM_TEMPERATURE_SENSORS> temperatures = {};
   uint16_t packet_offset = 0;
   RECEIVE_BUF(trx_buf_, {});
-  for (uint i = 0; i < Constants::NUM_TEMPERATURE_SENSORS; i++) {
+  for (uint64_t i = 0; i < Constants::NUM_TEMPERATURE_SENSORS; i++) {
     if (packet_offset + sizeof(float) >= HID_BUF_SIZE) {
       RECEIVE_BUF(trx_buf_, {});
       packet_offset = 0;
@@ -365,7 +365,7 @@ std::string Driver::get_all_fan_parameters() {
   std::array<FanParameters, Constants::NUM_FANS> all_fans = {};
   uint16_t packet_offset = 0;
   RECEIVE_BUF(trx_buf_, {});
-  for (uint i = 0; i < Constants::NUM_FANS; i++) {
+  for (uint64_t i = 0; i < Constants::NUM_FANS; i++) {
     if (packet_offset + sizeof(FanParameters) >= HID_BUF_SIZE) {
       RECEIVE_BUF(trx_buf_, {});
       packet_offset = 0;
@@ -435,7 +435,7 @@ std::string Driver::get_all_led_parameters() {
   std::array<LEDParameters, Constants::NUM_LEDS> all_leds = {};
   uint16_t packet_offset = 0;
   RECEIVE_BUF(trx_buf_, {});
-  for (uint i = 0; i < Constants::NUM_LEDS; i++) {
+  for (uint64_t i = 0; i < Constants::NUM_LEDS; i++) {
     if (packet_offset + sizeof(LEDParameters) >= HID_BUF_SIZE) {
       RECEIVE_BUF(trx_buf_, {});
       packet_offset = 0;

@@ -2,3 +2,6 @@
 vgcore.*
 test
 *.so
+x64/
+*.user
+.vs/

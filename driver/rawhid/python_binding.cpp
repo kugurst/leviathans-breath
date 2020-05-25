@@ -1,3 +1,7 @@
+#ifdef _MSC_VER
+#define BOOST_PYTHON_STATIC_LIB
+#endif
+
 #include <boost/python.hpp>
 
 #include "constants.hpp"
