@@ -1,4 +1,6 @@
 import os
+import constants
+
 from PyQt5 import QtCore, QtGui, QtWidgets, Qt
 
 
@@ -42,7 +44,7 @@ class SpinningLabelImage(QtWidgets.QLabel):
 class Widget(QtWidgets.QWidget):
     def build_label(self):
         label = SpinningLabelImage(alignment=QtCore.Qt.AlignCenter)
-        img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fan.svg")
+        img_path = os.path.join(constants.APP_ROOT_DIR, "fan.svg")
         pixmap = QtGui.QPixmap(img_path)
         pixmap = pixmap.scaledToHeight(80, QtCore.Qt.SmoothTransformation)
         label.set_pixmap(pixmap)

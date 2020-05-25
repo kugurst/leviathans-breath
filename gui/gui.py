@@ -15,7 +15,7 @@ class Ui_mw_main(object):
         mw_main.setObjectName("mw_main")
         mw_main.resize(997, 616)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("/home/markaligbe/Documents/PlatformIO/Projects/leviathans_breath_pio/gui/logo.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("logo.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         mw_main.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(mw_main)
         self.centralwidget.setObjectName("centralwidget")

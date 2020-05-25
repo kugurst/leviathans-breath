@@ -104,7 +104,7 @@ class StyledGui(gui.Ui_mw_main, QtWidgets.QMainWindow):
             parent = self
 
         label = spinning_label_image.SpinningLabelImage(parent, alignment=QtCore.Qt.AlignCenter)
-        img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fan.svg")
+        img_path = os.path.join(constants.APP_ROOT_DIR, "fan.svg")
         pixmap = QtGui.QPixmap(img_path)
         pixmap = pixmap.scaledToHeight(80, QtCore.Qt.SmoothTransformation)
         label.set_pixmap(pixmap)
@@ -269,3 +269,13 @@ class GroupBoxProxyStyle(QtWidgets.QProxyStyle):
             self.drawPrimitive(
                 QtWidgets.QStyle.PE_IndicatorBranch, opt, painter, widget
             )
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    mw_main = QtWidgets.QMainWindow()
+    ui = StyledGui()
+    ui.setupUi()
+    mw_main.show()
+    sys.exit(app.exec_())
