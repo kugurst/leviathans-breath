@@ -17,10 +17,10 @@ TARGET = $(PROG).so
 CXX = clang++
 CC = clang
 # STRIP = strip
-CFLAGS = -Wall -O2 -DOS_$(OS) -I./FixedPoints/src -I/usr/include/python3.7m -DDRIVER -DFIXED_POINTS_USE_NAMESPACE -g -DDISABLE_SERIAL -fPIC
-CXXFLAGS = -Wall -O2 -DOS_$(OS) -I./FixedPoints/src -I/usr/include/python3.7m -DDRIVER -DFIXED_POINTS_USE_NAMESPACE -g -DDISABLE_SERIAL -fPIC
+CFLAGS = -Wall -O2 -DOS_$(OS) -I./FixedPoints/src -I/usr/include/python3.8 -DDRIVER -DFIXED_POINTS_USE_NAMESPACE -g -DDISABLE_SERIAL -fPIC
+CXXFLAGS = -Wall -O2 -DOS_$(OS) -I./FixedPoints/src -I/usr/include/python3.8 -DDRIVER -DFIXED_POINTS_USE_NAMESPACE -g -DDISABLE_SERIAL -fPIC
 LDFLAGS = -g
-LIBS = -lusb -lgtest -lstdc++ -lpython3.7m -lboost_python37
+LIBS = -lusb -lgtest -lstdc++ -lpython3.8 -lboost_python38
 else ifeq ($(OS), MACOSX)
 TARGET = $(PROG).dmg
 SDK = /Developer/SDKs/MacOSX10.5.sdk
